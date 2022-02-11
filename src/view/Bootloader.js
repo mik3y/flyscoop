@@ -2,12 +2,12 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import logo from "../../assets/icon.png";
 import SettingsContext from "../component/SettingsContext";
-import { getLogger } from "../lib/logging";
+import { getLogger } from "../lib/Logging";
 import ApiContext from "../component/ApiContext";
 import * as Updates from "expo-updates";
 import Constants from "expo-constants";
 import AppLoading from "expo-app-loading";
-import AppMainView from "./AppMain";
+import MainView from "./MainView";
 
 const debug = getLogger("BootloaderView");
 
@@ -139,7 +139,7 @@ export default BootloaderView = () => {
     );
 
   // Show the main app.
-  return <AppMainView />;
+  return <MainView />
 };
 
 const styles = StyleSheet.create({
