@@ -1,20 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { ApiContextProvider } from "./src/component/ApiContext";
+import { EnvironmentContextProvider } from "./src/component/EnvironmentContext";
+import { SettingsContextProvider } from "./src/component/SettingsContext";
+
+import AppMainView from "./src/view/AppMain";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <EnvironmentContextProvider>
+      <SettingsContextProvider>
+        <ApiContextProvider>
+          <AppMainView />
+        </ApiContextProvider>
+      </SettingsContextProvider>
+    </EnvironmentContextProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
