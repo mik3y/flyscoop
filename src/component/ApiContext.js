@@ -25,17 +25,21 @@ export const ApiContextProvider = function ({ children }) {
     }
     setApiClient(
       new ApiClient(
-        environment.apiBaseUrl,
-        installationId,
         authToken
       )
     );
   }, [isInitialized, environment, appConfig, installationId, authToken]);
 
+  const validateApiKey = async (newApiKey) => {
+    const c = new ApiClient(newApiKey);
+    await c.getViewer();
+  }
+
   return (
     <ApiContext.Provider
       value={{
         apiClient,
+        validateApiKey,
       }}
     >
       {children}

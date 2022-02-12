@@ -2,6 +2,69 @@ import { getLogger } from "./Logging";
 
 const debug = getLogger("ApiClient");
 
+const QUERY_GET_VIEWER = () => `query { viewer { email } }`;
+
+const QUERY_GET_APPS = () => `
+query {
+  apps(role:null) {
+    nodes {
+      name
+      status
+      state
+      appUrl
+      regions {
+        name
+        code
+        gatewayAvailable
+        latitude
+        longitude
+      }
+      currentRelease {
+        createdAt
+        description
+        version
+      }
+      appUrl
+      deployed
+      hostname
+      role {
+        __typename
+      }
+    }
+  }
+}`;
+
+const QUERY_GET_APP_DETAIL = (appName) => `
+query {
+  app(name:"paasthru") {
+    runtime
+    allocations {
+      id
+      region
+      status
+      desiredStatus
+      healthy
+      privateIP
+      version
+      createdAt
+      updatedAt
+    }
+    regions {
+      name
+      code
+      latitude
+      longitude
+    }
+    changes {
+      nodes {
+        id
+        description
+        createdAt
+      }
+    }
+  }
+}`;
+
 class HTTPError extends Error {
   constructor(response) {
     super(response.statusText);
@@ -37,18 +100,13 @@ class JSONHTTPError extends HTTPError {
 }
 
 class ApiClient {
-  constructor(
-    baseUrl,
-    installationId,
-    accessToken = null,
-  ) {
-    this.baseUrl = baseUrl;
-    this.installationId = installationId;
+  constructor(accessToken = null, baseUrl = "https://api.fly.io") {
     this.accessToken = accessToken;
+    this.baseUrl = baseUrl;
   }
 
   toString() {
-    return `<ApiClient baseUrl=${this.baseUrl} installationId=${this.installationId} accessToken=${this.accessToken}>`;
+    return `<ApiClient baseUrl=${this.baseUrl} accessToken=${this.accessToken}>`;
   }
 
   /** Fetch standard headers that should be set per-request. */
@@ -79,6 +137,8 @@ class ApiClient {
   }
 
   async _fetch(method, path, data = null, params = {}, withAccessToken = true) {
+    console.log("### API call: ", this.accessToken);
+
     const querystring = new URLSearchParams();
     for (let key in params) {
       querystring.append(key, params[key]);
@@ -86,11 +146,6 @@ class ApiClient {
     const rawQs = querystring.toString();
     const qs = rawQs ? `?${rawQs}` : "";
     const url = `${this.baseUrl}${path}${qs}`;
-
-    if (withAccessToken) {
-      await this._refreshAccessTokenIfNeeded();
-    }
-
     const headers = this._getHeaders(withAccessToken);
 
     const encodedData = data ? JSON.stringify(data) : null;
@@ -124,6 +179,48 @@ class ApiClient {
     return this._fetch("POST", path, data, params, withAccessToken);
   }
 
+  async query(q) {
+    const data = {
+      query: q,
+    };
+    return this._post("/graphql", data);
+  }
+
+  async getViewer() {
+    const q = QUERY_GET_VIEWER()
+    return this.query(q);
+  }
+
+  async getApps() {
+    const q = QUERY_GET_APPS()
+    const nodes = (await this.query(q)).data.apps.nodes;
+    return nodes.filter((app) => app.role === null);
+  }
+
+  async getAppDetail(appName) {
+    const q = QUERY_GET_APP_DETAIL(appName);
+    const result = (await this.query(q)).data.app;
+    return result;
+  }
+
+  async getLogs({ appName, region = null, token = null, instance = null }) {
+    const params = {};
+    if (region) {
+      params.region = region;
+    }
+    if (token) {
+      params.token = token;
+    }
+    if (instance) {
+      params.instace = instance;
+    }
+    const responseJson = await this.get(`/api/v1/apps/${appName}/logs`, params);
+    const lines = responseJson.data;
+    const nextToken =
+      (responseJson.meta && responseJson.meta.next_token) || null;
+
+    return { lines, nextToken };
+  }
 }
 
 export default ApiClient;

@@ -59,7 +59,7 @@ class Storage {
   }
 
   async setAuthToken(token) {
-    await this._setSecure(Storage.SECURE_KEY_API_AUTH_TOKEN, tokens);
+    await this._setSecure(Storage.SECURE_KEY_API_AUTH_TOKEN, token);
   }
 
   async getAuthToken(defaultValue = null) {
@@ -72,6 +72,7 @@ class Storage {
 
   async reset() {
     await AsyncStorage.clear();
+    await this.setAuthToken('');
   }
 }
 

@@ -4,30 +4,10 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
-
-const AppsView = () => {
-  return (
-    <View style={styles.container}>
-      <Text>AppsView</Text>
-    </View>
-  );
-};
-
-const LoginView = () => {
-  return (
-    <View style={styles.container}>
-      <Text>LoginView</Text>
-    </View>
-  );
-};
-
-const SettingsView = () => {
-  return (
-    <View style={styles.container}>
-      <Text>LoginView</Text>
-    </View>
-  );
-};
+import LoginView from "./LoginView";
+import SettingsView from "./SettingsView";
+import AppsView from "./AppsView";
+import AppDetailView from "./AppDetailView";
 
 const Tab = createMaterialBottomTabNavigator();
 const TabScreen = () => {
@@ -54,13 +34,28 @@ const TabScreen = () => {
           }}
         />
         <Tab.Screen
+          name="login"
+          component={LoginView}
+          options={{
+            tabBarLabel: "Login",
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="account"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
           name="settings"
           component={SettingsView}
           options={{
+            headerShown: true,
             tabBarLabel: "Settings",
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
-                name="account-settings"
+                name="adjust"
                 color={color}
                 size={26}
               />
@@ -81,6 +76,11 @@ const ModalStackScreen = () => {
         component={LoginView}
         options={{ headerShown: false }}
       />
+      <ModalStack.Screen
+        name="AppDetail"
+        component={AppDetailView}
+        options={{ headerShown: true,  }}
+      />
       {/* Other modals here. */}
     </ModalStack.Navigator>
   );
@@ -93,7 +93,7 @@ const MainStackScreen = () => {
       <MainStack.Screen
         name="Main"
         component={TabScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
     </MainStack.Navigator>
   );
