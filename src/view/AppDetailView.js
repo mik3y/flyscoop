@@ -175,8 +175,19 @@ const AppDetailView = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <Title style={GlobalStyles.appTitle}>{app.name}</Title>
-        <AppSummarySection app={app} appDetail={detail} />
+        <Card
+          style={[
+            styles.section,
+            {
+              backgroundColor: '#fff',
+            },
+          ]}
+        >
+          <Card.Content>
+            <Title style={GlobalStyles.appTitle}>{app.name}</Title>
+            <AppSummarySection app={app} appDetail={detail} />
+          </Card.Content>
+        </Card>
         <Section>
           <Button mode={'contained'} icon="note-text" onPress={doViewLogs}>
             View Logs
