@@ -8,6 +8,7 @@ import LoginView from "./LoginView";
 import SettingsView from "./SettingsView";
 import AppsView from "./AppsView";
 import AppDetailView from "./AppDetailView";
+import AppLogsView from "./AppLogsView";
 
 const Tab = createMaterialBottomTabNavigator();
 const TabScreen = () => {
@@ -77,6 +78,11 @@ const ModalStackScreen = () => {
         options={{ headerShown: false }}
       />
       <ModalStack.Screen
+        name="AppLogs"
+        component={AppLogsView}
+        options={{ headerShown: true,  }}
+      />
+      <ModalStack.Screen
         name="AppDetail"
         component={AppDetailView}
         options={{ headerShown: true,  }}
@@ -129,14 +135,5 @@ const MainView = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#605770",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
 
 export default MainView;

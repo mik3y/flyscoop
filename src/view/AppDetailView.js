@@ -68,7 +68,12 @@ const AppDetailView = ({ route, navigation }) => {
 
   const regions = app.regions;
 
-  const doViewLogs = () => {};
+  const doViewLogs = () => {
+    navigation.navigate("Modals", {
+      screen: "AppLogs",
+      params: { app },
+    });
+  };
 
   const currentReleaseBox = app.currentRelease ? (
     <>
@@ -90,8 +95,6 @@ const AppDetailView = ({ route, navigation }) => {
       <ChangesList changes={detail.changes.nodes} />
     ) : null;
 
-  console.log('regions', regions)
-  console.log('allocations', detail && detail.allocations)
 
   const statusByRegion = regions.map((region) => {
     return (
@@ -109,16 +112,17 @@ const AppDetailView = ({ route, navigation }) => {
         <Title>{app.name}</Title>
         {currentReleaseBox}
         <MapView regions={regions} style={styles.map} />
-        {statusByRegion}
-        {changesBox}
         <Button
-          style={{ marginTop: 20, marginBottom: 40 }}
+          style={{ marginTop: 20 }}
           mode={"contained"}
           icon="note-text"
           onPress={doViewLogs}
         >
           View Logs
         </Button>
+        {statusByRegion}
+        {changesBox}
+        <View style={{ marginBottom: 20 }}></View>
       </ScrollView>
     </View>
   );

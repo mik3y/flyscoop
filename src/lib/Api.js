@@ -214,7 +214,7 @@ class ApiClient {
     if (instance) {
       params.instace = instance;
     }
-    const responseJson = await this.get(`/api/v1/apps/${appName}/logs`, params);
+    const responseJson = await this._get(`/api/v1/apps/${appName}/logs`, params);
     const lines = responseJson.data;
     const nextToken =
       (responseJson.meta && responseJson.meta.next_token) || null;
