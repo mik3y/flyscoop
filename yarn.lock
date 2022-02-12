@@ -1136,6 +1136,11 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
+"@expo-google-fonts/roboto-mono@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/roboto-mono/-/roboto-mono-0.2.2.tgz#90ba396114bf8b293154a25bd869de238b5f0884"
+  integrity sha512-x3a3wZ4Qq/OHzSL9fH492XCpTrCzhXvkVh+h9Q8+ESoHAqbR3EFx/SuZIFlLlX8Dg5AWesGOZxOQIRCOSo01nw==
+
 "@expo/config-plugins@4.0.18", "@expo/config-plugins@^4.0.2":
   version "4.0.18"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.0.18.tgz#80cf6a3aed83e78f714ad097d80e5a7cca48591a"
@@ -3246,7 +3251,7 @@ expo-file-system@~13.1.3:
     "@expo/config-plugins" "^4.0.2"
     uuid "^3.4.0"
 
-expo-font@~10.0.5:
+expo-font@~10.0.4, expo-font@~10.0.5:
   version "10.0.5"
   resolved "https://registry.yarnpkg.com/expo-font/-/expo-font-10.0.5.tgz#8010060ec5326b3b462f7a1ac6b232dc4d1a7317"
   integrity sha512-x9YwM0xLkDdSvFjeNbyuh33Q1Hk3uc2jbMuuAN5W2ZVcUZqG0M8GCX/KV/D/7rYqdXKbliQA5r44MyDwZe/XRw==

@@ -4,12 +4,14 @@ import { Card } from 'react-native-paper';
 
 export const LineChart = ({ allPlots, title = '', legend = null }) => {
   // Convert each [x,y] list into an object of { data: [yvals] }
-  const datasets = allPlots.map((plot) => {
-    return {
-      data: plot.timeseries.map((point) => point[1]),
-      color: () => plot.color,
-    };
-  });
+  const datasets = allPlots
+    .filter((plot) => plot.timeseries && plot.timeseries.length)
+    .map((plot) => {
+      return {
+        data: plot.timeseries.map((point) => point[1]),
+        color: () => plot.color,
+      };
+    });
   return (
     <Card>
       {title ? <Card.Title title={title} /> : null}

@@ -1,5 +1,10 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 
+import {
+  RobotoMono_400Regular,
+  RobotoMono_700Bold,
+  useFonts,
+} from '@expo-google-fonts/roboto-mono';
 import AppLoading from 'expo-app-loading';
 import Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
@@ -28,6 +33,11 @@ export default BootloaderView = () => {
   const [checkinComplete, setCheckinComplete] = useState(false);
   const [appIsUpToDate, setAppIsUpToDate] = useState(false);
   const [statusText, setStatusText] = useState('');
+
+  const [fontsLoaded] = useFonts({
+    RobotoMono_400Regular,
+    RobotoMono_700Bold,
+  });
 
   const isExpoGo = Constants.appOwnership === 'expo';
 
@@ -89,10 +99,10 @@ export default BootloaderView = () => {
       setStatusText('Optimizing experience...');
       await performFirstLaunchCheckin();
     }
-    if (isInitialized && apiClient) {
+    if (isInitialized && apiClient && fontsLoaded) {
       loadStage3();
     }
-  }, [isInitialized, apiClient]);
+  }, [isInitialized, apiClient, fontsLoaded]);
 
   // Stage 4: Attempt update check
   useEffect(() => {

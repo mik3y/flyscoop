@@ -4,63 +4,85 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, Card, Title } from 'react-native-paper';
 
 import ApiContext from '../component/ApiContext';
-import { LineChart } from '../component/Charts';
 import LoadingZone from '../component/LoadingZone';
+import MetricsCard from '../component/MetricsCard';
 import { LongDateAndTime } from '../component/TimeUtil';
 import ApiClient from '../lib/Api';
+import GlobalStyles from '../lib/GlobalStyles';
 import { getLogger } from '../lib/Logging';
-import MapView from './MapView';
 
 const debug = getLogger('AppDetailView');
 
-const MetricsBox = ({ app, plots, legend = null }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [allPlots, setAllPlots] = useState([]);
-  const { apiClient } = useContext(ApiContext);
-
-  useEffect(() => {
-    async function load() {
-      const newPlots = [];
-      try {
-        for (let plot of plots) {
-          const { query, color } = plot;
-          const result = await apiClient.queryProm({ app, query });
-          newPlots.push({ timeseries: result.data[0].values, color });
-        }
-        setAllPlots(newPlots);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    load();
-  }, []);
-
-  if (allPlots.length) {
-    return <LineChart allPlots={allPlots} title={'Data Transfer'} legend={legend} />;
-  }
-  return null;
+const Section = ({ children }) => {
+  return <View style={styles.section}>{children}</View>;
 };
 
-const MetricsList = ({ app }) => {
+const RegionStatusCard = ({ region, allocations }) => {
+  const totalAllocations = allocations.length;
+  const healthyAllocations = allocations.filter((a) => a.healthy).length;
+
   return (
-    <View>
-      <MetricsBox
-        app={app}
-        plots={[
-          { query: ApiClient.METRIC_QUERIES.data_sent(app), color: 'red' },
-          { query: ApiClient.METRIC_QUERIES.data_recv(app), color: 'green' },
-        ]}
-        legend={['sent', 'recd']}
-      />
-    </View>
+    <Card style={{ marginBottom: 20 }}>
+      <Card.Title title={region.code.toUpperCase()} />
+      <Card.Content>
+        <Text>
+          {healthyAllocations}/{totalAllocations} healthy
+        </Text>
+      </Card.Content>
+    </Card>
   );
 };
 
-const ChangesList = ({ changes }) => {
-  if (!changes.length) {
+const AppSummarySection = ({ app }) => {
+  const { currentRelease } = app;
+  if (!app) {
     return null;
   }
-  const changeList = changes.slice(0, 10).map((change) => {
+
+  return (
+    <Section>
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={styles.textLabel}>Version: </Text>
+        <Text>{`v${app.currentRelease.version}`}</Text>
+      </View>
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={styles.textLabel}>Deployed: </Text>
+        <Text>
+          <LongDateAndTime datetime={app.currentRelease.createdAt} />
+        </Text>
+      </View>
+    </Section>
+  );
+};
+
+const AppMetricsSection = ({ appDetail }) => {
+  if (!appDetail) {
+    return null;
+  }
+  return (
+    <Section>
+      <MetricsCard
+        app={appDetail}
+        plots={[
+          { query: ApiClient.METRIC_QUERIES.data_sent(appDetail), color: 'red' },
+          { query: ApiClient.METRIC_QUERIES.data_recv(appDetail), color: 'green' },
+        ]}
+        legend={['sent', 'recd']}
+      />
+    </Section>
+  );
+};
+
+const AppActivitySection = ({ appDetail }) => {
+  if (!appDetail) {
+    return null;
+  }
+  const { changes } = appDetail;
+  if (!changes || !changes.nodes.length) {
+    return null;
+  }
+
+  const changeList = changes.nodes.slice(0, 10).map((change) => {
     return (
       <View key={change.id} style={{ marginBottom: 10 }}>
         <Text style={styles.activityTitle}>{change.description}</Text>
@@ -71,27 +93,30 @@ const ChangesList = ({ changes }) => {
     );
   });
   return (
-    <Card style={{ marginTop: 20 }}>
-      <Card.Title title={'Activity'} />
-      <Card.Content>{changeList}</Card.Content>
-    </Card>
+    <Section>
+      <Card>
+        <Card.Title title={'Activity'} />
+        <Card.Content>{changeList}</Card.Content>
+      </Card>
+    </Section>
   );
 };
 
-const RegionStatusCard = ({ region, allocations }) => {
-  const totalAllocations = allocations.length;
-  const healthyAllocations = allocations.filter((a) => a.healthy).length;
-
-  return (
-    <Card style={{ marginTop: 20 }}>
-      <Card.Title title={region.code.toUpperCase()} />
-      <Card.Content>
-        <Text>
-          {healthyAllocations}/{totalAllocations} healthy
-        </Text>
-      </Card.Content>
-    </Card>
-  );
+const AppRegionalStatusSection = ({ app, appDetail }) => {
+  if (!appDetail) {
+    return null;
+  }
+  const regions = app.regions;
+  const statusByRegion = regions.map((region) => {
+    return (
+      <RegionStatusCard
+        key={region.code}
+        region={region}
+        allocations={appDetail.allocations.filter((a) => a.region === region.code)}
+      />
+    );
+  });
+  return <Section>{statusByRegion}</Section>;
 };
 
 const AppDetailView = ({ route, navigation }) => {
@@ -116,8 +141,6 @@ const AppDetailView = ({ route, navigation }) => {
     load();
   }, [app]);
 
-  const regions = app.regions;
-
   const doViewLogs = () => {
     navigation.navigate('Modals', {
       screen: 'AppLogs',
@@ -125,51 +148,21 @@ const AppDetailView = ({ route, navigation }) => {
     });
   };
 
-  const currentReleaseBox = app.currentRelease ? (
-    <>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.textLabel}>Version: </Text>
-        <Text>{`v${app.currentRelease.version}`}</Text>
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.textLabel}>Deployed: </Text>
-        <Text>
-          <LongDateAndTime datetime={app.currentRelease.createdAt} />
-        </Text>
-      </View>
-    </>
-  ) : null;
-
-  const changesBox =
-    detail && detail.changes && detail.changes.nodes ? (
-      <ChangesList changes={detail.changes.nodes} />
-    ) : null;
-
-  const statusByRegion = regions.map((region) => {
-    return (
-      <RegionStatusCard
-        key={region.code}
-        region={region}
-        allocations={detail ? detail.allocations.filter((a) => a.region === region.code) : []}
-      />
-    );
-  });
-
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <Title>{app.name}</Title>
-        {currentReleaseBox}
-        <LoadingZone isLoading={!detail}>
-          <MetricsList app={detail} />
+        <Title style={GlobalStyles.appTitle}>{app.name}</Title>
+        <AppSummarySection app={app} />
+        <Section>
+          <Button mode={'contained'} icon="note-text" onPress={doViewLogs}>
+            View Logs
+          </Button>
+        </Section>
+        <LoadingZone isLoading={isLoading}>
+          <AppMetricsSection appDetail={detail} />
+          <AppActivitySection appDetail={detail} />
+          <AppRegionalStatusSection app={app} appDetail={detail} />
         </LoadingZone>
-        {/* <MapView regions={regions} style={styles.map} /> */}
-        <Button style={{ marginTop: 20 }} mode={'contained'} icon="note-text" onPress={doViewLogs}>
-          View Logs
-        </Button>
-        {statusByRegion}
-        {changesBox}
-        <View style={{ marginBottom: 20 }}></View>
       </ScrollView>
     </View>
   );
@@ -182,28 +175,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  section: {
+    marginBottom: 20,
+  },
   scrollView: {
     width: '100%',
     padding: 20,
-  },
-  cardStyle: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  statusIcon: {
-    fontSize: 20,
-  },
-  statusIconHealthy: {
-    color: '#1DB954',
-  },
-  statusIconDead: {
-    color: '#777777',
-  },
-  statusIconUnhealthy: {
-    color: '#ed5858',
-  },
-  statusIconUnknown: {
-    color: '#787878',
   },
   textLabel: {
     fontWeight: 'bold',
@@ -211,7 +188,6 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: 250,
-    marginBottom: 20,
   },
   activityTitle: {
     fontWeight: 'bold',

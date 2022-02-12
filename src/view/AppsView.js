@@ -8,6 +8,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ApiContext from '../component/ApiContext';
 import LoadingZone from '../component/LoadingZone';
 import { TimeSince } from '../component/TimeUtil';
+import GlobalStyles from '../lib/GlobalStyles';
 import { getLogger } from '../lib/Logging';
 
 const debug = getLogger('AppsView');
@@ -75,6 +76,7 @@ const AppCard = ({ app, onPress = () => {}, ...cardProps }) => {
       <Card {...cardProps} key={app.name} style={styles.cardStyle}>
         <Card.Title
           title={app.name}
+          titleStyle={GlobalStyles.appTitle}
           subtitle={subtitle}
           left={(props) => React.cloneElement(appIcon, props)}
           leftStyle={{
