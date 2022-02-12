@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from "react";
-import * as Sentry from "sentry-expo";
-import Constants from "expo-constants";
+import React, { useEffect, useState } from 'react';
 
-const ENVIRONMENT_LOCAL = "local";
-const ENVIRONMENT_STAGING = "staging";
-const ENVIRONMENT_PROD = "production";
+import Constants from 'expo-constants';
+import * as Sentry from 'sentry-expo';
+
+const ENVIRONMENT_LOCAL = 'local';
+const ENVIRONMENT_STAGING = 'staging';
+const ENVIRONMENT_PROD = 'production';
 
 export const ENVIRONMENTS = {
   [ENVIRONMENT_LOCAL]: {
     name: ENVIRONMENT_LOCAL,
-    sentryDsn: "",
+    sentryDsn: '',
   },
   [ENVIRONMENT_STAGING]: {
     name: ENVIRONMENT_STAGING,
-    sentryDsn: "",
+    sentryDsn: '',
   },
   [ENVIRONMENT_PROD]: {
     name: ENVIRONMENT_PROD,
-    sentryDsn: "",
+    sentryDsn: '',
   },
 };
 
@@ -29,7 +30,7 @@ const EnvironmentContext = React.createContext({
 });
 
 export const EnvironmentContextProvider = function ({ children }) {
-  const isExpoGo = Constants.appOwnership === "expo";
+  const isExpoGo = Constants.appOwnership === 'expo';
   const [envName, setEnvName] = useState(isExpoGo ? ENVIRONMENT_LOCAL : ENVIRONMENT_PROD);
   const environment = ENVIRONMENTS[envName];
 
@@ -38,7 +39,7 @@ export const EnvironmentContextProvider = function ({ children }) {
       throw new Error(`Invalid env name: ${newEnvName}`);
     }
     setEnvName(newEnvName);
-  }
+  };
 
   useEffect(() => {
     if (environment.sentryDsn) {

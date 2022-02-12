@@ -1,6 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
-import Storage from "../lib/Storage";
-import EnvironmentContext from "./EnvironmentContext";
+import React, { useContext, useEffect, useState } from 'react';
+
+import Storage from '../lib/Storage';
+import EnvironmentContext from './EnvironmentContext';
 
 /**
  * SettingsContext exposes various app settings, and handles persisting
@@ -35,7 +36,7 @@ export const SettingsContextProvider = function ({ children }) {
 
   const resetInstallation = async () => {
     await storage.reset();
-    setIsInitialized(false);  // triggers effect
+    setIsInitialized(false); // triggers effect
   };
 
   const setAuthToken = async (newToken) => {

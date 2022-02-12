@@ -1,26 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Button, Card, Chip, Portal } from "react-native-paper";
-import ApiContext from "../component/ApiContext";
-import { getLogger } from "../lib/Logging";
+import React, { useContext, useEffect, useState } from 'react';
 
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { TimeSince } from "../component/TimeUtil";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from '@react-navigation/native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Card, Chip, Portal } from 'react-native-paper';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const debug = getLogger("AppsView");
+import ApiContext from '../component/ApiContext';
+import { TimeSince } from '../component/TimeUtil';
+import { getLogger } from '../lib/Logging';
+
+const debug = getLogger('AppsView');
 
 const RegionList = ({ regions, maxRegions = 3 }) => {
   const chips = regions.slice(0, maxRegions).map((region) => {
     return (
       <Chip key={region.code}>
-        <Text style={{ fontVariant: ["small-caps"] }}>{region.code}</Text>
+        <Text style={{ fontVariant: ['small-caps'] }}>{region.code}</Text>
       </Chip>
     );
   });
@@ -34,7 +29,7 @@ const RegionList = ({ regions, maxRegions = 3 }) => {
     ) : null;
 
   return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       {chips}
       {extraBits}
     </View>
@@ -44,26 +39,18 @@ const RegionList = ({ regions, maxRegions = 3 }) => {
 const AppCard = ({ app, onPress = () => {}, ...cardProps }) => {
   let appIcon;
   switch (app.status) {
-    case "running":
+    case 'running':
       appIcon = (
-        <FontAwesome5
-          name={"check-circle"}
-          style={[styles.statusIcon, styles.statusIconHealthy]}
-        />
+        <FontAwesome5 name={'check-circle'} style={[styles.statusIcon, styles.statusIconHealthy]} />
       );
       break;
-    case "dead":
-      appIcon = (
-        <FontAwesome5
-          name={"skull"}
-          style={[styles.statusIcon, styles.statusIconDead]}
-        />
-      );
+    case 'dead':
+      appIcon = <FontAwesome5 name={'skull'} style={[styles.statusIcon, styles.statusIconDead]} />;
       break;
     default:
       appIcon = (
         <FontAwesome5
-          name={"exclamation-circle"}
+          name={'exclamation-circle'}
           style={[styles.statusIcon, styles.statusIconUnknown]}
         />
       );
@@ -73,7 +60,7 @@ const AppCard = ({ app, onPress = () => {}, ...cardProps }) => {
   if (app.currentRelease) {
     const { version, createdAt } = app.currentRelease;
     subtitle = (
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: 'row' }}>
         <Text>{`v${version} • `}</Text>
         <TimeSince datetime={createdAt} />
       </View>
@@ -93,7 +80,7 @@ const AppCard = ({ app, onPress = () => {}, ...cardProps }) => {
             margin: 0,
             padding: 0,
             width: 20,
-            alignContent: "flex-end",
+            alignContent: 'flex-end',
           }}
         />
         <Card.Content>
@@ -115,7 +102,7 @@ const AppsView = () => {
 
   useEffect(() => {
     async function load() {
-      debug("Loading apps...");
+      debug('Loading apps...');
       setIsLoading(true);
       try {
         setApps(await apiClient.getApps());
@@ -130,8 +117,8 @@ const AppsView = () => {
 
   const onAppSelected = (app) => {
     debug(`app selected: ${app}`);
-    navigation.navigate("Modals", {
-      screen: "AppDetail",
+    navigation.navigate('Modals', {
+      screen: 'AppDetail',
       params: { app },
     });
 
@@ -143,14 +130,7 @@ const AppsView = () => {
 
   const getAppList = () => {
     return apps.map((app) => {
-      return (
-        <AppCard
-          key={app.name}
-          app={app}
-          onPress={() => onAppSelected(app)}
-          elevation={4}
-        />
-      );
+      return <AppCard key={app.name} app={app} onPress={() => onAppSelected(app)} elevation={4} />;
     });
   };
 
@@ -167,32 +147,32 @@ const AppsView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#D1C4E9",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#D1C4E9',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollView: {
-    width: "100%",
+    width: '100%',
     padding: 20,
   },
   cardStyle: {
-    width: "100%",
+    width: '100%',
     marginBottom: 20,
   },
   statusIcon: {
     fontSize: 20,
   },
   statusIconHealthy: {
-    color: "#1DB954",
+    color: '#1DB954',
   },
   statusIconDead: {
-    color: "#777777",
+    color: '#777777',
   },
   statusIconUnhealthy: {
-    color: "#ed5858",
+    color: '#ed5858',
   },
   statusIconUnknown: {
-    color: "#787878",
+    color: '#787878',
   },
 });
 

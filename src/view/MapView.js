@@ -1,12 +1,13 @@
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import debugLibrary from "debug";
-import React, { useEffect, useRef } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { DefaultTheme } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { useEffect, useRef } from 'react';
 
-const debug = debugLibrary("skyscour.AirportView");
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import debugLibrary from 'debug';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { DefaultTheme } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const debug = debugLibrary('skyscour.AirportView');
 
 const MIN_ZOOM_LEVEL = 7.0;
 
@@ -22,9 +23,8 @@ export default function RegionMap({ regions, style = {} }) {
     if (!region) {
       return null;
     }
-    const screenWidth = Math.round(Dimensions.get("window").width);
-    const zoomLevel =
-      Math.log2(360 * (screenWidth / 256 / region.longitudeDelta)) + 1;
+    const screenWidth = Math.round(Dimensions.get('window').width);
+    const zoomLevel = Math.log2(360 * (screenWidth / 256 / region.longitudeDelta)) + 1;
     return zoomLevel;
   };
 
@@ -32,12 +32,12 @@ export default function RegionMap({ regions, style = {} }) {
     if (!isFocused) {
       return;
     }
-    debug("Map region changed:", region);
-    debug("Zoom level:", getZoomLevel());
+    debug('Map region changed:', region);
+    debug('Zoom level:', getZoomLevel());
   };
 
   const showRegion = async (region) => {
-    debug("Showing app: ", region);
+    debug('Showing app: ', region);
     // navigation.navigate("AirportDetail", { designator });
   };
 
@@ -63,7 +63,7 @@ export default function RegionMap({ regions, style = {} }) {
       }}
       title={region.code.toUpperCase()}
       description={region.name}
-      pinColor={"green"}
+      pinColor={'green'}
       onCalloutPress={() => showRegion(region)}
     />
   ));
@@ -86,15 +86,15 @@ export default function RegionMap({ regions, style = {} }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   overlayBox: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
-    width: "100%",
+    width: '100%',
     zIndex: 1,
     paddingLeft: 8,
     paddingRight: 8,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
   warningBar: {
     marginBottom: 4,
-    backgroundColor: "#333",
+    backgroundColor: '#333',
     padding: 8,
     paddingLeft: 16,
     paddingRight: 16,
@@ -124,13 +124,13 @@ const styles = StyleSheet.create({
   locationButtonContainer: {
     padding: 4,
     borderRadius: 50,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     marginRight: 8,
     backgroundColor: DefaultTheme.colors.surface,
   },
   map: {
     flex: 3,
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
 });

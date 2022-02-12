@@ -1,9 +1,8 @@
 /**
  * Collection of utility functions.
  */
-
-import { getRandomBytes } from "expo-random";
-import { binary_to_base58 as b58encode } from "base58-js";
+import { binary_to_base58 as b58encode } from 'base58-js';
+import { getRandomBytes } from 'expo-random';
 
 /** Generates a random ID with given prefix. */
 export const makeRandomId = (prefix, numBytes = 16) => {

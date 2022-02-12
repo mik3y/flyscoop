@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useContext } from "react";
-import SettingsContext from "./SettingsContext";
-import EnvironmentContext from "./EnvironmentContext";
-import ApiClient from "../lib/Api";
-import { useEffect } from "react";
+import React, { useState } from 'react';
+import { useContext } from 'react';
+import { useEffect } from 'react';
+
+import ApiClient from '../lib/Api';
+import EnvironmentContext from './EnvironmentContext';
+import SettingsContext from './SettingsContext';
 
 /**
  * ApiContext exposes an ApiClient according to the current config.
@@ -14,8 +15,7 @@ const ApiContext = React.createContext({
 
 export const ApiContextProvider = function ({ children }) {
   const { environment } = useContext(EnvironmentContext);
-  const { appConfig, installationId, isInitialized, authToken } =
-    useContext(SettingsContext);
+  const { appConfig, installationId, isInitialized, authToken } = useContext(SettingsContext);
   const [apiClient, setApiClient] = useState(null);
 
   useEffect(() => {
@@ -23,17 +23,13 @@ export const ApiContextProvider = function ({ children }) {
       setApiClient(null);
       return;
     }
-    setApiClient(
-      new ApiClient(
-        authToken
-      )
-    );
+    setApiClient(new ApiClient(authToken));
   }, [isInitialized, environment, appConfig, installationId, authToken]);
 
   const validateApiKey = async (newApiKey) => {
     const c = new ApiClient(newApiKey);
     await c.getViewer();
-  }
+  };
 
   return (
     <ApiContext.Provider

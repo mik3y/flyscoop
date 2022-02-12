@@ -1,20 +1,16 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { Title } from "react-native-paper";
-import ApiContext from "../component/ApiContext";
-import { useTimeout } from "../lib/Hooks";
-import { getLogger } from "../lib/Logging";
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Title } from 'react-native-paper';
+
+import ApiContext from '../component/ApiContext';
+import { useTimeout } from '../lib/Hooks';
+import { getLogger } from '../lib/Logging';
 
 const MAX_LOGS_TO_SHOW = 1000;
 const POLL_INTERVAL_MILLIS = 5000;
 
-const debug = getLogger("AppLogsView");
+const debug = getLogger('AppLogsView');
 
 const AppLogsView = ({ route, navigation }) => {
   const { app } = route.params;
@@ -73,9 +69,7 @@ const AppLogsView = ({ route, navigation }) => {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {logItems}
       </ScrollView>
@@ -86,20 +80,20 @@ const AppLogsView = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#D1C4E9",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#D1C4E9',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollView: {
-    width: "100%",
+    width: '100%',
     padding: 0,
   },
   logLineEven: {
-    backgroundColor: "#00000033",
+    backgroundColor: '#00000033',
     padding: 6,
   },
   logLineOdd: {
-    backgroundColor: "#00000011",
+    backgroundColor: '#00000011',
     padding: 6,
   },
 });

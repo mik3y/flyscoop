@@ -1,25 +1,20 @@
-import React, { useContext, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import {
-  Appbar,
-  Button,
-  DefaultTheme,
-  Headline,
-  List,
-  TextInput,
-} from "react-native-paper";
-import ApiContext from "../component/ApiContext";
-import { getLogger } from "../lib/Logging";
-import { createStackNavigator } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
+import React, { useContext, useState } from 'react';
 
-const debug = getLogger("LoginView");
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Appbar, Button, DefaultTheme, Headline, List, TextInput } from 'react-native-paper';
+
+import ApiContext from '../component/ApiContext';
+import { getLogger } from '../lib/Logging';
+
+const debug = getLogger('LoginView');
 
 const LoginIntroView = () => {
   const navigation = useNavigation();
 
   const onContinuePressed = () => {
-    navigation.navigate("LoginForm");
+    navigation.navigate('LoginForm');
   };
 
   // For some reason need to wrap this in a view with explicit
@@ -27,12 +22,12 @@ const LoginIntroView = () => {
   // https://github.com/react-navigation/react-navigation/issues/3184
 
   return (
-    <View style={{ display: "flex", width: "100%" }}>
+    <View style={{ display: 'flex', width: '100%' }}>
       <ScrollView>
         <Headline>Get Started</Headline>
         <Text>
-            FlyTouch is a utility application for Fly.io accounts.
-            In order to use it, you need to log in.
+          FlyTouch is a utility application for Fly.io accounts. In order to use it, you need to log
+          in.
         </Text>
         <Text style={styles.registrationSubheader}>What you can do</Text>
         <View>
@@ -81,7 +76,7 @@ const LoginIntroView = () => {
 const LoginStack = createStackNavigator();
 const LoginStackScreen = () => {
   return (
-    <View style={{ width: "100%", flex: 1 }}>
+    <View style={{ width: '100%', flex: 1 }}>
       <LoginStack.Navigator
         initialRouteName="LoginIntro"
         screenOptions={{
@@ -89,10 +84,7 @@ const LoginStackScreen = () => {
           headerShown: false,
         }}
       >
-        <LoginStack.Screen
-          name="LoginIntro"
-          component={LoginIntroView}
-        />
+        <LoginStack.Screen name="LoginIntro" component={LoginIntroView} />
         <LoginStack.Screen name="LoginForm" component={LoginForm} />
       </LoginStack.Navigator>
     </View>
@@ -100,12 +92,12 @@ const LoginStackScreen = () => {
 };
 
 const LoginForm = ({ onLoggedIn = () => {} }) => {
-  const [apiKey, setApiKey] = useState("");
+  const [apiKey, setApiKey] = useState('');
   const { apiClient, validateApiKey } = useContext(ApiContext);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const doLogin = async () => {
-    debug("Logging in ....");
+    debug('Logging in ....');
     setIsLoggingIn(true);
     try {
       await validateApiKey(apiKey);
@@ -130,13 +122,8 @@ const LoginForm = ({ onLoggedIn = () => {} }) => {
         editable={!isLoggingIn}
         onChangeText={setApiKey}
       />
-      <Button
-        mode="contained"
-        onPress={doLogin}
-        disabled={isLoggingIn}
-        style={styles.loginButton}
-      >
-        {isLoggingIn ? "Logging In..." : "Log In"}
+      <Button mode="contained" onPress={doLogin} disabled={isLoggingIn} style={styles.loginButton}>
+        {isLoggingIn ? 'Logging In...' : 'Log In'}
       </Button>
     </View>
   );
@@ -144,7 +131,7 @@ const LoginForm = ({ onLoggedIn = () => {} }) => {
 
 export default function LoginView({ route, navigation }) {
   const onLoggedIn = async (user) => {
-    debug("User logged in:", user);
+    debug('User logged in:', user);
     // setUser(user);
     navigation.goBack();
   };
@@ -165,7 +152,7 @@ export default function LoginView({ route, navigation }) {
     <View style={styles.container}>
       <Appbar.Header style={styles.appBar}>
         <Appbar.BackAction onPress={goBack} />
-        <Appbar.Content title={"Please log in"} />
+        <Appbar.Content title={'Please log in'} />
       </Appbar.Header>
       {getContent()}
     </View>
@@ -175,33 +162,33 @@ export default function LoginView({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: '100%',
     backgroundColor: DefaultTheme.colors.background,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
   },
   mainContent: {
     flex: 1,
-    width: "100%",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    width: '100%',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     padding: 16,
   },
   appBar: {
-    width: "100%",
+    width: '100%',
   },
   input: {
-    width: "100%",
+    width: '100%',
     marginBottom: 8,
   },
   loginButton: {
-    width: "100%",
+    width: '100%',
     padding: 16,
   },
   registrationSubheader: {
-    textTransform: "uppercase",
-    fontWeight: "bold",
-    textAlign: "center",
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    textAlign: 'center',
     marginTop: 20,
   },
 });

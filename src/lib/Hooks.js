@@ -1,8 +1,8 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 /**
  * A timeout-managing hook.
- * 
+ *
  * Original source: https://usehooks-ts.com/react-hook/use-timeout
  */
 export function useTimeout(callback, delay) {

@@ -1,15 +1,15 @@
-import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
-import { ApiContextProvider } from "./src/component/ApiContext";
-import { EnvironmentContextProvider } from "./src/component/EnvironmentContext";
-import { SettingsContextProvider } from "./src/component/SettingsContext";
-import Bootloader from "./src/view/Bootloader";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer } from '@react-navigation/native';
 import dayjs from 'dayjs';
-
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import { ApiContextProvider } from './src/component/ApiContext';
+import { EnvironmentContextProvider } from './src/component/EnvironmentContext';
+import { SettingsContextProvider } from './src/component/SettingsContext';
+import Bootloader from './src/view/Bootloader';
 
 // dayjs plugin setup
 dayjs.extend(localizedFormat);
@@ -28,7 +28,7 @@ const theme = {
     // $primary-color-text:   #FFFFFF
     // $secondary-text-color: #757575
     // $divider-color:        #BDBDBD
-  }
+  },
 };
 
 export default function App() {

@@ -1,15 +1,17 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import logo from "../../assets/icon.png";
-import SettingsContext from "../component/SettingsContext";
-import { getLogger } from "../lib/Logging";
-import ApiContext from "../component/ApiContext";
-import * as Updates from "expo-updates";
-import Constants from "expo-constants";
-import AppLoading from "expo-app-loading";
-import MainView from "./MainView";
+import { useContext, useEffect, useRef, useState } from 'react';
 
-const debug = getLogger("BootloaderView");
+import AppLoading from 'expo-app-loading';
+import Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
+import { Image, StyleSheet, Text, View } from 'react-native';
+
+import logo from '../../assets/icon.png';
+import ApiContext from '../component/ApiContext';
+import SettingsContext from '../component/SettingsContext';
+import { getLogger } from '../lib/Logging';
+import MainView from './MainView';
+
+const debug = getLogger('BootloaderView');
 
 const SPLASH_SCREEN_DEFAULT_TIMEOUT_MILLIS = 1500;
 
@@ -21,15 +23,13 @@ const SPLASH_SCREEN_DEFAULT_TIMEOUT_MILLIS = 1500;
 export default BootloaderView = () => {
   const { isInitialized } = useContext(SettingsContext);
   const { apiClient } = useContext(ApiContext);
-  const [showingSplashScreen, setShowingSplashScreen] = useState(
-    !isInitialized
-  );
+  const [showingSplashScreen, setShowingSplashScreen] = useState(!isInitialized);
   const setShowingSplashScreenRef = useRef(setShowingSplashScreen);
   const [checkinComplete, setCheckinComplete] = useState(false);
   const [appIsUpToDate, setAppIsUpToDate] = useState(false);
-  const [statusText, setStatusText] = useState("");
+  const [statusText, setStatusText] = useState('');
 
-  const isExpoGo = Constants.appOwnership === "expo";
+  const isExpoGo = Constants.appOwnership === 'expo';
 
   const performFirstLaunchCheckin = async () => {
     // TODO(mikey): Phone home to ensure app is valid.
@@ -38,22 +38,22 @@ export default BootloaderView = () => {
 
   const checkForUpdates = async () => {
     if (isExpoGo) {
-      debug("Running on Go, skipping update check.");
+      debug('Running on Go, skipping update check.');
       setAppIsUpToDate(true);
       return;
     }
 
     try {
-      debug("Checking for updates...");
+      debug('Checking for updates...');
       const result = Updates.checkForUpdateAsync();
       if (!result.isAvailable) {
-        debug("App is up-to-date!");
+        debug('App is up-to-date!');
         setAppIsUpToDate(true);
         return;
       }
-      debug("Fetching latest update ...");
+      debug('Fetching latest update ...');
       await Updates.fetchUpdateAsync();
-      debug("Triggering reload..");
+      debug('Triggering reload..');
       await Updates.reloadAsync();
     } catch (e) {
       debug(`Error checking for updates, soldiering on: ${e}`);
@@ -72,8 +72,8 @@ export default BootloaderView = () => {
   useEffect(() => {
     async function loadStage1() {
       setShowingSplashScreen(true);
-      debug("Storage is not initialized, waiting...");
-      setStatusText("Starting up...");
+      debug('Storage is not initialized, waiting...');
+      setStatusText('Starting up...');
     }
     if (!isInitialized) {
       setCheckinComplete(false);
@@ -85,8 +85,8 @@ export default BootloaderView = () => {
   // Stage 2 & 3: Wait for api client & perform initial checkin.
   useEffect(() => {
     async function loadStage3() {
-      debug("Initialized storage, performing api checkin");
-      setStatusText("Optimizing experience...");
+      debug('Initialized storage, performing api checkin');
+      setStatusText('Optimizing experience...');
       await performFirstLaunchCheckin();
     }
     if (isInitialized && apiClient) {
@@ -97,8 +97,8 @@ export default BootloaderView = () => {
   // Stage 4: Attempt update check
   useEffect(() => {
     async function loadStage4() {
-      debug("Api checkin complete, checking for updates");
-      setStatusText("Fixing things up...");
+      debug('Api checkin complete, checking for updates');
+      setStatusText('Fixing things up...');
       await checkForUpdates();
     }
     if (isInitialized && apiClient && checkinComplete) {
@@ -109,10 +109,10 @@ export default BootloaderView = () => {
   // Stage 5: Dismiss splash screen
   useEffect(() => {
     async function loadStage5() {
-      debug("Init is done, lingering on splash screen for a bit.");
-      setStatusText("Getting ready to fly...");
+      debug('Init is done, lingering on splash screen for a bit.');
+      setStatusText('Getting ready to fly...');
       setTimeout(() => {
-        debug("Clearing splash screen");
+        debug('Clearing splash screen');
         setShowingSplashScreenRef.current(false);
       }, SPLASH_SCREEN_DEFAULT_TIMEOUT_MILLIS);
     }
@@ -132,24 +132,22 @@ export default BootloaderView = () => {
       <View style={styles.container}>
         {appLoading}
         <Image source={logo} style={{ width: 400, height: 400 }} />
-        {statusText ? (
-          <Text style={styles.statusText}>{statusText}</Text>
-        ) : null}
+        {statusText ? <Text style={styles.statusText}>{statusText}</Text> : null}
       </View>
     );
 
   // Show the main app.
-  return <MainView />
+  return <MainView />;
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#605770",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#605770',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statusText: {
-    color: "#aaa",
+    color: '#aaa',
   },
 });

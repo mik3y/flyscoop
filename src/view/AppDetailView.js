@@ -1,15 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button, Card, Title } from "react-native-paper";
-import ApiContext from "../component/ApiContext";
-import { getLogger } from "../lib/Logging";
+import React, { useContext, useEffect, useState } from 'react';
 
-import { LongDateAndTime } from "../component/TimeUtil";
-import MapView from "./MapView";
-import ApiClient from "../lib/Api";
-import { LineChart } from "../component/Charts";
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, Title } from 'react-native-paper';
 
-const debug = getLogger("AppDetailView");
+import ApiContext from '../component/ApiContext';
+import { LineChart } from '../component/Charts';
+import { LongDateAndTime } from '../component/TimeUtil';
+import ApiClient from '../lib/Api';
+import { getLogger } from '../lib/Logging';
+import MapView from './MapView';
+
+const debug = getLogger('AppDetailView');
 
 const MetricsBox = ({ app, plots, legend = null }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,9 +35,7 @@ const MetricsBox = ({ app, plots, legend = null }) => {
   }, []);
 
   if (allPlots.length) {
-    return (
-      <LineChart allPlots={allPlots} title={"Data Transfer"} legend={legend} />
-    );
+    return <LineChart allPlots={allPlots} title={'Data Transfer'} legend={legend} />;
   }
   return null;
 };
@@ -72,7 +71,7 @@ const ChangesList = ({ changes }) => {
   });
   return (
     <Card style={{ marginTop: 20 }}>
-      <Card.Title title={"Activity"} />
+      <Card.Title title={'Activity'} />
       <Card.Content>{changeList}</Card.Content>
     </Card>
   );
@@ -119,19 +118,19 @@ const AppDetailView = ({ route, navigation }) => {
   const regions = app.regions;
 
   const doViewLogs = () => {
-    navigation.navigate("Modals", {
-      screen: "AppLogs",
+    navigation.navigate('Modals', {
+      screen: 'AppLogs',
       params: { app },
     });
   };
 
   const currentReleaseBox = app.currentRelease ? (
     <>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: 'row' }}>
         <Text style={styles.textLabel}>Version: </Text>
         <Text>{`v${app.currentRelease.version}`}</Text>
       </View>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: 'row' }}>
         <Text style={styles.textLabel}>Deployed: </Text>
         <Text>
           <LongDateAndTime datetime={app.currentRelease.createdAt} />
@@ -150,11 +149,7 @@ const AppDetailView = ({ route, navigation }) => {
       <RegionStatusCard
         key={region.code}
         region={region}
-        allocations={
-          detail
-            ? detail.allocations.filter((a) => a.region === region.code)
-            : []
-        }
+        allocations={detail ? detail.allocations.filter((a) => a.region === region.code) : []}
       />
     );
   });
@@ -166,12 +161,7 @@ const AppDetailView = ({ route, navigation }) => {
         {currentReleaseBox}
         {detail && <MetricsList app={detail} />}
         {/* <MapView regions={regions} style={styles.map} /> */}
-        <Button
-          style={{ marginTop: 20 }}
-          mode={"contained"}
-          icon="note-text"
-          onPress={doViewLogs}
-        >
+        <Button style={{ marginTop: 20 }} mode={'contained'} icon="note-text" onPress={doViewLogs}>
           View Logs
         </Button>
         {statusByRegion}
@@ -185,43 +175,43 @@ const AppDetailView = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#D1C4E9",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#D1C4E9',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollView: {
-    width: "100%",
+    width: '100%',
     padding: 20,
   },
   cardStyle: {
-    width: "100%",
+    width: '100%',
     marginBottom: 20,
   },
   statusIcon: {
     fontSize: 20,
   },
   statusIconHealthy: {
-    color: "#1DB954",
+    color: '#1DB954',
   },
   statusIconDead: {
-    color: "#777777",
+    color: '#777777',
   },
   statusIconUnhealthy: {
-    color: "#ed5858",
+    color: '#ed5858',
   },
   statusIconUnknown: {
-    color: "#787878",
+    color: '#787878',
   },
   textLabel: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   map: {
-    width: "100%",
+    width: '100%',
     height: 250,
     marginBottom: 20,
   },
   activityTitle: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   activityDate: {},
 });
