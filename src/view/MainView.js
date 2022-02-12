@@ -12,16 +12,37 @@ import AppsView from './AppsView';
 import LoginView from './LoginView';
 import SettingsView from './SettingsView';
 
+const AppStack = createStackNavigator();
+const AppStackScreen = () => {
+  const { colors } = useTheme();
+  return (
+    <AppStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        headerStyle: {
+          backgroundColor: colors.primary,
+        },
+        headerTitleStyle: {
+          color: '#fff',
+        },
+      }}
+    >
+      <AppStack.Screen name="Apps" component={AppsView} options={{ headerShown: false }} />
+      <AppStack.Screen name="AppDetail" component={AppDetailView} options={{ headerShown: true }} />
+    </AppStack.Navigator>
+  );
+};
+
 const Tab = createMaterialBottomTabNavigator();
 const TabScreen = () => {
   const { colors } = useTheme();
 
   return (
     <>
-      <Tab.Navigator initialRouteName="apps" barStyle={{ backgroundColor: colors.primary }}>
+      <Tab.Navigator initialRouteName="appsStack" barStyle={{ backgroundColor: colors.primary }}>
         <Tab.Screen
-          name="apps"
-          component={AppsView}
+          name="appsStack"
+          component={AppStackScreen}
           options={{
             tabBarLabel: 'Apps',
             tabBarIcon: ({ color }) => (
@@ -61,11 +82,6 @@ const ModalStackScreen = () => {
     <ModalStack.Navigator screenOptions={{ presentation: 'modal' }}>
       <ModalStack.Screen name="LoginModal" component={LoginView} options={{ headerShown: false }} />
       <ModalStack.Screen name="AppLogs" component={AppLogsView} options={{ headerShown: true }} />
-      <ModalStack.Screen
-        name="AppDetail"
-        component={AppDetailView}
-        options={{ headerShown: true }}
-      />
       {/* Other modals here. */}
     </ModalStack.Navigator>
   );
@@ -73,8 +89,18 @@ const ModalStackScreen = () => {
 
 const MainStack = createStackNavigator();
 const MainStackScreen = () => {
+  const { colors } = useTheme();
   return (
-    <MainStack.Navigator>
+    <MainStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.primary,
+        },
+        headerTitleStyle: {
+          color: '#fff',
+        },
+      }}
+    >
       <MainStack.Screen name="Main" component={TabScreen} options={{ headerShown: true }} />
     </MainStack.Navigator>
   );

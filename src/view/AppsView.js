@@ -119,11 +119,7 @@ const AppsView = () => {
   }, []);
 
   const onAppSelected = (app) => {
-    debug(`app selected: ${app}`);
-    navigation.navigate('Modals', {
-      screen: 'AppDetail',
-      params: { app },
-    });
+    navigation.navigate('AppDetail', { app });
   };
 
   const getAppList = () => {
