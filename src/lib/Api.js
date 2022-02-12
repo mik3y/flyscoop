@@ -56,6 +56,22 @@ query {
       createdAt
       updatedAt
     }
+    vmSize {
+      name
+      cpuCores
+      memoryGb
+      memoryMb
+      priceMonth
+      priceSecond
+    }
+    taskGroupCounts {
+      name
+      count
+    }
+    processGroups {
+      name
+      maxPerRegion
+    }
     regions {
       name
       code

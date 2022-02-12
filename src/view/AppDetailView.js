@@ -33,24 +33,48 @@ const RegionStatusCard = ({ region, allocations }) => {
   );
 };
 
-const AppSummarySection = ({ app }) => {
-  const { currentRelease } = app;
+const AppSummarySection = ({ app, appDetail }) => {
   if (!app) {
     return null;
   }
 
+  const scaleListItems =
+    appDetail && appDetail.taskGroupCounts.length
+      ? appDetail.taskGroupCounts.map((tg) => {
+          return (
+            <Text key={tg.name}>
+              {tg.name}×{tg.count}
+            </Text>
+          );
+        })
+      : null;
+
+  const scaleList = scaleListItems ? <Text>({scaleListItems})</Text> : null;
+
   return (
     <Section>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.textLabel}>Version: </Text>
-        <Text>{`v${app.currentRelease.version}`}</Text>
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.textLabel}>Deployed: </Text>
-        <Text>
-          <LongDateAndTime datetime={app.currentRelease.createdAt} />
-        </Text>
-      </View>
+      {app.currentRelease && (
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Version: </Text>
+          <Text>{`v${app.currentRelease.version}`}</Text>
+        </View>
+      )}
+      {app.currentRelease && (
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Deployed: </Text>
+          <Text>
+            <LongDateAndTime datetime={app.currentRelease.createdAt} />
+          </Text>
+        </View>
+      )}
+      {appDetail && (
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.textLabel}>Scale: </Text>
+          <Text>
+            {appDetail.vmSize.name} {scaleList}
+          </Text>
+        </View>
+      )}
     </Section>
   );
 };
@@ -152,7 +176,7 @@ const AppDetailView = ({ route, navigation }) => {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <Title style={GlobalStyles.appTitle}>{app.name}</Title>
-        <AppSummarySection app={app} />
+        <AppSummarySection app={app} appDetail={detail} />
         <Section>
           <Button mode={'contained'} icon="note-text" onPress={doViewLogs}>
             View Logs
