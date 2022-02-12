@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "toc": "doctoc --notitle --github README.md"
   },
   "dependencies": {
     "@expo-google-fonts/roboto-mono": "^0.2.2",
@@ -55,6 +56,7 @@
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
+    "doctoc": "^2.1.0",
     "prettier": "^2.5.1",
     "typescript": "~4.3.5"
   },
