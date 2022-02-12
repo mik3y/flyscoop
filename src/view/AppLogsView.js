@@ -16,7 +16,7 @@ const AppLogsView = ({ route, navigation }) => {
   const { app } = route.params;
   const [logs, setLogs] = useState([]);
   const [token, setToken] = useState(null);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(true);
   const { apiClient } = useContext(ApiContext);
   const [nextTimeout, setNextTimeout] = useState(null);
 

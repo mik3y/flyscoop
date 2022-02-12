@@ -5,6 +5,7 @@ import { Button, Card, Title } from 'react-native-paper';
 
 import ApiContext from '../component/ApiContext';
 import { LineChart } from '../component/Charts';
+import LoadingZone from '../component/LoadingZone';
 import { LongDateAndTime } from '../component/TimeUtil';
 import ApiClient from '../lib/Api';
 import { getLogger } from '../lib/Logging';
@@ -159,7 +160,9 @@ const AppDetailView = ({ route, navigation }) => {
       <ScrollView style={styles.scrollView}>
         <Title>{app.name}</Title>
         {currentReleaseBox}
-        {detail && <MetricsList app={detail} />}
+        <LoadingZone isLoading={!detail}>
+          <MetricsList app={detail} />
+        </LoadingZone>
         {/* <MapView regions={regions} style={styles.map} /> */}
         <Button style={{ marginTop: 20 }} mode={'contained'} icon="note-text" onPress={doViewLogs}>
           View Logs

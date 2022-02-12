@@ -6,6 +6,7 @@ import { Button, Card, Chip, Portal } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import ApiContext from '../component/ApiContext';
+import LoadingZone from '../component/LoadingZone';
 import { TimeSince } from '../component/TimeUtil';
 import { getLogger } from '../lib/Logging';
 
@@ -121,17 +122,13 @@ const AppsView = () => {
       screen: 'AppDetail',
       params: { app },
     });
-
-    // navigation.navigate("Modals", {
-    //   screen: "AppDetail",
-    //   params: { app },
-    // });
   };
 
   const getAppList = () => {
-    return apps.map((app) => {
+    const appList = apps.map((app) => {
       return <AppCard key={app.name} app={app} onPress={() => onAppSelected(app)} elevation={4} />;
     });
+    return <LoadingZone isLoading={isLoading}>{appList}</LoadingZone>;
   };
 
   return (
