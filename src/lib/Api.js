@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { getLogger } from "./Logging";
 
 const debug = getLogger("ApiClient");
@@ -36,8 +37,13 @@ query {
 
 const QUERY_GET_APP_DETAIL = (appName) => `
 query {
-  app(name:"paasthru") {
+  app(name:"${appName}") {
+    name
+    id
     runtime
+    organization {
+      slug
+    }
     allocations {
       id
       region
@@ -64,6 +70,13 @@ query {
     }
   }
 }`;
+
+const METRIC_QUERIES = {
+  data_sent: (app) =>
+    `sum(rate(fly_instance_net_sent_bytes{app="${app.name}",device="eth0"}[15s]))`,
+  data_recv: (app) =>
+    `sum(rate(fly_instance_net_recv_bytes{app="${app.name}",device="eth0"}[15s]))`,
+};
 
 class HTTPError extends Error {
   constructor(response) {
@@ -110,14 +123,16 @@ class ApiClient {
   }
 
   /** Fetch standard headers that should be set per-request. */
-  _getHeaders(withAccessToken = true) {
+  _getHeaders(withAccessToken = true, formEncode = false) {
     return {
-      Accept: "application/json",
-      "Content-Type": "application/json",
       Authorization:
         this.accessToken && withAccessToken
           ? `Bearer ${this.accessToken}`
           : undefined,
+      Accept: "application/json",
+      "Content-Type": formEncode
+        ? "application/x-www-form-urlencoded;charset=UTF-8"
+        : "application/json",
     };
   }
 
@@ -136,29 +151,47 @@ class ApiClient {
     throw new TextHTTPError(response, data);
   }
 
-  async _fetch(method, path, data = null, params = {}, withAccessToken = true) {
+  async _fetch(
+    method,
+    path,
+    data = null,
+    params = {},
+    withAccessToken = true,
+    formEncode
+  ) {
     console.log("### API call: ", this.accessToken);
 
     const querystring = new URLSearchParams();
     for (let key in params) {
       querystring.append(key, params[key]);
     }
+
     const rawQs = querystring.toString();
     const qs = rawQs ? `?${rawQs}` : "";
     const url = `${this.baseUrl}${path}${qs}`;
-    const headers = this._getHeaders(withAccessToken);
 
-    const encodedData = data ? JSON.stringify(data) : null;
+    const headers = this._getHeaders(withAccessToken, formEncode);
+    const encodedData = data
+      ? formEncode
+        ? Object.keys(data)
+            .map(
+              (key) =>
+                encodeURIComponent(key) + "=" + encodeURIComponent(data[key])
+            )
+            .join("&")
+        : JSON.stringify(data)
+      : null;
+
     const options = {
       method,
-      headers: {
-        ...headers,
-      },
+      headers,
     };
+
     if (data) {
       options.headers["Content-Length"] = encodedData.length;
       options.body = encodedData;
     }
+
     debug(`>>> ${method} ${url} options=${JSON.stringify(options)}`);
     try {
       const response = await fetch(url, options);
@@ -175,31 +208,57 @@ class ApiClient {
     return this._fetch("GET", path, null, params);
   }
 
-  async _post(path, data = null, params = {}, withAccessToken = true) {
-    return this._fetch("POST", path, data, params, withAccessToken);
+  async _post(
+    path,
+    data = null,
+    params = {},
+    withAccessToken = true,
+    formEncode = false
+  ) {
+    return this._fetch("POST", path, data, params, withAccessToken, formEncode);
   }
 
-  async query(q) {
+  async queryGql(q) {
     const data = {
       query: q,
     };
     return this._post("/graphql", data);
   }
 
+  async queryProm({ app, query, step = 60 * 5, minutes = 60 * 1 }) {
+    const data = {
+      query,
+    };
+    const params = {
+      step,
+      start: dayjs().subtract(minutes, 'minute').toISOString(),
+      end: dayjs().toISOString(),
+    }
+    debug('querying prometheus: %j params %j', query, params);
+    const result = await this._post(`/prometheus/${app.organization.slug}/api/v1/query_range`, data, params, true, true);
+    if (result.status === 'success') {
+      return {
+        data: result.data.result,
+        resultType: result.data.resultType,
+      };
+    }
+    throw new Error(`Prom query failed: status=${result.status}`);
+  }
+
   async getViewer() {
-    const q = QUERY_GET_VIEWER()
-    return this.query(q);
+    const q = QUERY_GET_VIEWER();
+    return this.queryGql(q);
   }
 
   async getApps() {
-    const q = QUERY_GET_APPS()
-    const nodes = (await this.query(q)).data.apps.nodes;
+    const q = QUERY_GET_APPS();
+    const nodes = (await this.queryGql(q)).data.apps.nodes;
     return nodes.filter((app) => app.role === null);
   }
 
   async getAppDetail(appName) {
     const q = QUERY_GET_APP_DETAIL(appName);
-    const result = (await this.query(q)).data.app;
+    const result = (await this.queryGql(q)).data.app;
     return result;
   }
 
@@ -214,7 +273,10 @@ class ApiClient {
     if (instance) {
       params.instace = instance;
     }
-    const responseJson = await this._get(`/api/v1/apps/${appName}/logs`, params);
+    const responseJson = await this._get(
+      `/api/v1/apps/${appName}/logs`,
+      params
+    );
     const lines = responseJson.data;
     const nextToken =
       (responseJson.meta && responseJson.meta.next_token) || null;
@@ -222,5 +284,7 @@ class ApiClient {
     return { lines, nextToken };
   }
 }
+
+ApiClient.METRIC_QUERIES = METRIC_QUERIES;
 
 export default ApiClient;

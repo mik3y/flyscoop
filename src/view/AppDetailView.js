@@ -6,8 +6,55 @@ import { getLogger } from "../lib/Logging";
 
 import { LongDateAndTime } from "../component/TimeUtil";
 import MapView from "./MapView";
+import ApiClient from "../lib/Api";
+import { LineChart } from "../component/Charts";
 
 const debug = getLogger("AppDetailView");
+
+const MetricsBox = ({ app, plots, legend = null }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [allPlots, setAllPlots] = useState([]);
+  const { apiClient } = useContext(ApiContext);
+
+  useEffect(() => {
+    async function load() {
+      const newPlots = [];
+      try {
+        for (let plot of plots) {
+          const { query, color } = plot;
+          const result = await apiClient.queryProm({ app, query });
+          newPlots.push({ timeseries: result.data[0].values, color });
+        }
+        setAllPlots(newPlots);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    load();
+  }, []);
+
+  if (allPlots.length) {
+    return (
+      <LineChart allPlots={allPlots} title={"Data Transfer"} legend={legend} />
+    );
+  }
+  return null;
+};
+
+const MetricsList = ({ app }) => {
+  return (
+    <View>
+      <MetricsBox
+        app={app}
+        plots={[
+          { query: ApiClient.METRIC_QUERIES.data_sent(app), color: 'red' },
+          { query: ApiClient.METRIC_QUERIES.data_recv(app), color: 'green' },
+        ]}
+        legend={['sent', 'recd']}
+      />
+    </View>
+  );
+};
 
 const ChangesList = ({ changes }) => {
   if (!changes.length) {
@@ -33,13 +80,15 @@ const ChangesList = ({ changes }) => {
 
 const RegionStatusCard = ({ region, allocations }) => {
   const totalAllocations = allocations.length;
-  const healthyAllocations = allocations.filter(a => a.healthy).length;
+  const healthyAllocations = allocations.filter((a) => a.healthy).length;
 
   return (
     <Card style={{ marginTop: 20 }}>
       <Card.Title title={region.code.toUpperCase()} />
       <Card.Content>
-        <Text>{healthyAllocations}/{totalAllocations} healthy</Text>
+        <Text>
+          {healthyAllocations}/{totalAllocations} healthy
+        </Text>
       </Card.Content>
     </Card>
   );
@@ -55,7 +104,8 @@ const AppDetailView = ({ route, navigation }) => {
     async function load() {
       setIsLoading(true);
       try {
-        setDetail(await apiClient.getAppDetail(app.name));
+        const newDetail = await apiClient.getAppDetail(app.name);
+        setDetail(newDetail);
       } catch (e) {
         console.error(e);
         throw e;
@@ -64,7 +114,7 @@ const AppDetailView = ({ route, navigation }) => {
       }
     }
     load();
-  }, []);
+  }, [app]);
 
   const regions = app.regions;
 
@@ -95,13 +145,16 @@ const AppDetailView = ({ route, navigation }) => {
       <ChangesList changes={detail.changes.nodes} />
     ) : null;
 
-
   const statusByRegion = regions.map((region) => {
     return (
       <RegionStatusCard
         key={region.code}
         region={region}
-        allocations={detail ? detail.allocations.filter(a => a.region === region.code) : []}
+        allocations={
+          detail
+            ? detail.allocations.filter((a) => a.region === region.code)
+            : []
+        }
       />
     );
   });
@@ -111,7 +164,8 @@ const AppDetailView = ({ route, navigation }) => {
       <ScrollView style={styles.scrollView}>
         <Title>{app.name}</Title>
         {currentReleaseBox}
-        <MapView regions={regions} style={styles.map} />
+        {detail && <MetricsList app={detail} />}
+        {/* <MapView regions={regions} style={styles.map} /> */}
         <Button
           style={{ marginTop: 20 }}
           mode={"contained"}

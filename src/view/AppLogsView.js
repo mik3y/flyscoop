@@ -62,8 +62,8 @@ const AppLogsView = ({ route, navigation }) => {
   const logItems = logs.map((log, idx) => {
     const style = idx % 2 ? styles.logLineEven : styles.logLineOdd;
     return (
-      <View style={style}>
-        <Text key={log.id}>{log.attributes.message}</Text>
+      <View style={style} key={log.id}>
+        <Text>{log.attributes.message}</Text>
       </View>
     );
   });
