@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, Caption, Card, Chip, Portal } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
@@ -111,22 +111,23 @@ const AppsView = () => {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    async function load() {
-      debug('Loading apps...');
-      setIsLoading(true);
-      try {
-        const allApps = await apiClient.getApps();
-        const orgApps = allApps.filter((a) => a.organization.id === currentOrganization.id);
-        setApps(orgApps);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
+  async function fetchApps() {
+    debug('Loading apps...');
+    setIsLoading(true);
+    try {
+      const allApps = await apiClient.getApps();
+      const orgApps = allApps.filter((a) => a.organization.id === currentOrganization.id);
+      setApps(orgApps);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
     }
+  }
+
+  useEffect(() => {
     if (currentOrganization) {
-      load();
+      fetchApps();
     } else {
       setApps([]);
     }
@@ -137,10 +138,6 @@ const AppsView = () => {
   };
 
   const getAppList = () => {
-    if (isLoading) {
-      return <LoadingZone />;
-    }
-
     if (!apps.length) {
       return <EmptyState message={'No apps found in this organization.'} />;
     }
@@ -152,7 +149,10 @@ const AppsView = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={fetchApps} />}
+      >
         {getAppList()}
         <View style={{ marginBottom: 30 }}></View>
       </ScrollView>
