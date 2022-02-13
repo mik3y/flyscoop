@@ -20,7 +20,7 @@ import logo from '../../assets/icon.png';
 const SplashView = ({ message = null }) => {
   return (
     <View style={styles.container}>
-      <Image source={logo} style={{ width: 400, height: 400 }} />
+      <Image source={logo} style={{ width: 200, height: 200 }} />
       {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );
@@ -29,7 +29,7 @@ const SplashView = ({ message = null }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#605770',
+    backgroundColor: '#3a0088',
     alignItems: 'center',
     justifyContent: 'center',
   },
