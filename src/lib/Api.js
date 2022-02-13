@@ -256,7 +256,12 @@ class ApiClient {
     const data = {
       query: q,
     };
-    return this._post('/graphql', data);
+    const result = await this._post('/graphql', data);
+    if (result.errors) {
+      const errorMessage = result.errrors[0].message;
+      throw new Error(`GraphQL error: ${errorMessage}`);
+    }
+    return result;
   }
 
   async queryProm({ app, query, step = 60 * 5, minutes = 60 * 1 }) {
