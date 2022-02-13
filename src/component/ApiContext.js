@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { useEffect } from 'react';
 
 import ApiClient from '../lib/Api';
+import LoginView from '../view/LoginView';
 import EnvironmentContext from './EnvironmentContext';
 import SettingsContext from './SettingsContext';
 
@@ -15,23 +16,48 @@ const ApiContext = React.createContext({
 
 export const ApiContextProvider = function ({ children }) {
   const { environment } = useContext(EnvironmentContext);
-  const { appConfig, installationId, isInitialized, authToken } = useContext(SettingsContext);
+  const { appConfig, installationId, isInitialized, authToken, setAuthToken } =
+    useContext(SettingsContext);
   const [apiClient, setApiClient] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    if (!isInitialized) {
-      setApiClient(null);
-      return;
+  const validateAuthToken = async (newAuthToken) => {
+    try {
+      const c = new ApiClient(newAuthToken);
+      const result = await c.getViewer();
+      return true;
+    } catch (e) {
+      return false;
     }
-    setApiClient(new ApiClient(authToken));
+  };
+
+  const buildValidatedApiClient = async (newAuthToken) => {
+    try {
+      const c = new ApiClient(newAuthToken);
+      await c.getViewer();
+      return c;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    async function load() {
+      if (!isInitialized) {
+        setApiClient(null);
+      }
+      const newApiClient = await buildValidatedApiClient(authToken);
+      setApiClient(newApiClient);
+      setIsLoggedIn(!!newApiClient);
+    }
+    load();
   }, [isInitialized, environment, appConfig, installationId, authToken]);
 
   useEffect(() => {
     async function load() {
       try {
         await apiClient.getViewer();
-        setIsLoggedIn(true);
+        // setIsLoggedIn(true);
       } catch (e) {
         console.error(e);
       }
@@ -41,20 +67,27 @@ export const ApiContextProvider = function ({ children }) {
     }
   }, [apiClient]);
 
-  const validateApiKey = async (newApiKey) => {
-    const c = new ApiClient(newApiKey);
-    await c.getViewer();
+  const doLogin = async (newAuthToken) => {
+    const isValid = await validateAuthToken(newAuthToken);
+    if (isValid) {
+      console.log('token is valid');
+      setAuthToken(newAuthToken);
+    }
   };
 
   return (
     <ApiContext.Provider
       value={{
         apiClient,
-        validateApiKey,
         isLoggedIn,
+        validateAuthToken,
       }}
     >
-      {children}
+      {isLoggedIn ? (
+        children
+      ) : (
+        <LoginView onApiKeySet={doLogin} validateAuthToken={validateAuthToken} />
+      )}
     </ApiContext.Provider>
   );
 };

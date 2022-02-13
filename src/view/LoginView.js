@@ -1,109 +1,23 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
-import { useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Appbar, Button, DefaultTheme, Headline, List, TextInput } from 'react-native-paper';
+import { StyleSheet, Text, View } from 'react-native';
+import { Appbar, Button, DefaultTheme, TextInput } from 'react-native-paper';
 
-import ApiContext from '../component/ApiContext';
-import { getLogger } from '../lib/Logging';
-
-const debug = getLogger('LoginView');
-
-const LoginIntroView = () => {
-  const navigation = useNavigation();
-
-  const onContinuePressed = () => {
-    navigation.navigate('LoginForm');
-  };
-
-  // For some reason need to wrap this in a view with explicit
-  // styling, else we get weird layout. See:
-  // https://github.com/react-navigation/react-navigation/issues/3184
-
-  return (
-    <View style={{ display: 'flex', width: '100%' }}>
-      <ScrollView>
-        <Headline>Get Started</Headline>
-        <Text>
-          FlyTouch is a utility application for Fly.io accounts. In order to use it, you need to log
-          in.
-        </Text>
-        <Text style={styles.registrationSubheader}>What you can do</Text>
-        <View>
-          <List.Item
-            title="View apps"
-            description="View all of your apps and basic status"
-            left={(props) => <List.Icon {...props} icon="heart" />}
-          />
-          <List.Item
-            title="Scale up and down"
-            description="Quickly change the scale settings for an app"
-            left={(props) => <List.Icon {...props} icon="chat" />}
-          />
-          <List.Item
-            title="View logs"
-            description="View and follow logs for active apps"
-            left={(props) => <List.Icon {...props} icon="account-group" />}
-          />
-        </View>
-        <Text style={styles.registrationSubheader}>Requirements</Text>
-        <View>
-          <List.Item
-            title="API key"
-            description="We need an API"
-            left={(props) => <List.Icon {...props} icon="mail" />}
-          />
-          <List.Item
-            title="Private"
-            description="Your key is stored only locally, and only exchanged with fly.io hosts."
-            left={(props) => <List.Icon {...props} icon="do-not-disturb" />}
-          />
-        </View>
-        <Button
-          mode="contained"
-          icon="account-arrow-right"
-          style={{ marginTop: 20, marginBottom: 20 }}
-          onPress={onContinuePressed}
-        >
-          Continue
-        </Button>
-      </ScrollView>
-    </View>
-  );
-};
-
-const LoginStack = createStackNavigator();
-const LoginStackScreen = () => {
-  return (
-    <View style={{ width: '100%', flex: 1 }}>
-      <LoginStack.Navigator
-        initialRouteName="LoginIntro"
-        screenOptions={{
-          headerStatusBarHeight: 0,
-          headerShown: false,
-        }}
-      >
-        <LoginStack.Screen name="LoginIntro" component={LoginIntroView} />
-        <LoginStack.Screen name="LoginForm" component={LoginForm} />
-      </LoginStack.Navigator>
-    </View>
-  );
-};
-
-const LoginForm = ({ onLoggedIn = () => {} }) => {
+const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
   const [apiKey, setApiKey] = useState('');
-  const { apiClient, validateApiKey } = useContext(ApiContext);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const doLogin = async () => {
-    debug('Logging in ....');
     setIsLoggingIn(true);
+    setErrorMessage(null);
     try {
-      await validateApiKey(apiKey);
-      await apiClient.login(username, password);
-      const user = await apiClient.getCurrentUser();
-      onLoggedIn(user);
+      const isValid = await validateAuthToken(apiKey);
+      if (!isValid) {
+        setErrorMessage('Invalid token');
+        return;
+      }
+      await onApiKeySet(apiKey);
     } finally {
       setIsLoggingIn(false);
     }
@@ -122,6 +36,7 @@ const LoginForm = ({ onLoggedIn = () => {} }) => {
         editable={!isLoggingIn}
         onChangeText={setApiKey}
       />
+      {errorMessage && <Text>{errorMessage}</Text>}
       <Button mode="contained" onPress={doLogin} disabled={isLoggingIn} style={styles.loginButton}>
         {isLoggingIn ? 'Logging In...' : 'Log In'}
       </Button>
@@ -129,21 +44,11 @@ const LoginForm = ({ onLoggedIn = () => {} }) => {
   );
 };
 
-export default function LoginView({ route, navigation }) {
-  const onLoggedIn = async (user) => {
-    debug('User logged in:', user);
-    // setUser(user);
-    navigation.goBack();
-  };
-
-  const goBack = () => {
-    navigation.goBack();
-  };
-
+export default function LoginView({ onApiKeySet, validateAuthToken }) {
   const getContent = () => {
     return (
       <View style={styles.mainContent}>
-        <LoginStackScreen />
+        <LoginForm onApiKeySet={onApiKeySet} validateAuthToken={validateAuthToken} />
       </View>
     );
   };
@@ -151,7 +56,6 @@ export default function LoginView({ route, navigation }) {
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.appBar}>
-        <Appbar.BackAction onPress={goBack} />
         <Appbar.Content title={'Please log in'} />
       </Appbar.Header>
       {getContent()}
@@ -184,11 +88,5 @@ const styles = StyleSheet.create({
   loginButton: {
     width: '100%',
     padding: 16,
-  },
-  registrationSubheader: {
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
   },
 });
