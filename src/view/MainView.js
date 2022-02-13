@@ -39,10 +39,18 @@ const OrgNavHeader = ({ navigation, back }) => {
     );
   });
 
+  // Fetch current app from navigation state.
+  // TODO(mikey): So ugly and hacky. Any better way?
+  const navState = navigation.getState();
+  const appTabsState = navState.routes.find((s) => s.name === 'AppTabs');
+  const app = appTabsState ? appTabsState.params.app : null;
+
+  const title = app ? app.name : currentOrgName;
+
   return (
     <Appbar.Header>
       {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
-      <Appbar.Content title={currentOrgName} />
+      <Appbar.Content title={title} />
       {otherOrganizations.length ? (
         <Menu
           onDismiss={() => setShowMenu(false)}
