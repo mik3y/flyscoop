@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import Storage from '../lib/Storage';
+import SplashView from '../view/SplashView';
 import EnvironmentContext from './EnvironmentContext';
 
 /**
@@ -59,6 +60,12 @@ export const SettingsContextProvider = function ({ children }) {
     initialize();
   }, [environment.name]);
 
+  const componentToRender = !isInitialized ? (
+    <SplashView message={'Loading settings...'} />
+  ) : (
+    children
+  );
+
   return (
     <SettingsContext.Provider
       value={{
@@ -71,7 +78,7 @@ export const SettingsContextProvider = function ({ children }) {
         setDefaultOrgId,
       }}
     >
-      {children}
+      {componentToRender}
     </SettingsContext.Provider>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 
+import SplashView from '../view/SplashView';
 import ApiContext from './ApiContext';
 import SettingsContext from './SettingsContext';
 
@@ -60,6 +61,12 @@ export const OrganizationContextProvider = function ({ children }) {
     ? organizations.slice(1, organizations.length)
     : [];
 
+  const componentToRender = isLoading ? (
+    <SplashView message={'Loading organizations..'} />
+  ) : (
+    children
+  );
+
   return (
     <OrganizationContext.Provider
       value={{
@@ -68,7 +75,7 @@ export const OrganizationContextProvider = function ({ children }) {
         changeOrganization,
       }}
     >
-      {children}
+      {componentToRender}
     </OrganizationContext.Provider>
   );
 };
