@@ -2,11 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Button, Card, Chip, Portal } from 'react-native-paper';
+import { Button, Caption, Card, Chip, Portal } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import ApiContext from '../component/ApiContext';
+import EmptyState from '../component/EmptyState';
 import LoadingZone from '../component/LoadingZone';
+import OrganizationContext from '../component/OrganizationContext';
 import { TimeSince } from '../component/TimeUtil';
 import GlobalStyles from '../lib/GlobalStyles';
 import { getLogger } from '../lib/Logging';
@@ -100,6 +102,7 @@ const AppsView = () => {
   const [apps, setApps] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { apiClient } = useContext(ApiContext);
+  const { currentOrganization } = useContext(OrganizationContext);
 
   const navigation = useNavigation();
 
@@ -108,25 +111,38 @@ const AppsView = () => {
       debug('Loading apps...');
       setIsLoading(true);
       try {
-        setApps(await apiClient.getApps());
+        const allApps = await apiClient.getApps();
+        const orgApps = allApps.filter((a) => a.organization.id === currentOrganization.id);
+        setApps(orgApps);
       } catch (e) {
         console.error(e);
       } finally {
         setIsLoading(false);
       }
     }
-    load();
-  }, []);
+    if (currentOrganization) {
+      load();
+    } else {
+      setApps([]);
+    }
+  }, [currentOrganization]);
 
   const onAppSelected = (app) => {
     navigation.navigate('AppDetail', { app });
   };
 
   const getAppList = () => {
-    const appList = apps.map((app) => {
+    if (isLoading) {
+      return <LoadingZone />;
+    }
+
+    if (!apps.length) {
+      return <EmptyState message={'No apps found in this organization.'} />;
+    }
+
+    return apps.map((app) => {
       return <AppCard key={app.name} app={app} onPress={() => onAppSelected(app)} elevation={4} />;
     });
-    return <LoadingZone isLoading={isLoading}>{appList}</LoadingZone>;
   };
 
   return (

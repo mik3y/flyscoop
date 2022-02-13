@@ -1,16 +1,53 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { View } from 'react-native';
+import { Appbar, Menu, useTheme } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import OrganizationContext from '../component/OrganizationContext';
 import AppDetailView from './AppDetailView';
 import AppLogsView from './AppLogsView';
 import AppsView from './AppsView';
 import LoginView from './LoginView';
 import SettingsView from './SettingsView';
+
+const OrgNavHeader = ({ navigation, back }) => {
+  const { currentOrganization, otherOrganizations, changeOrganization } =
+    useContext(OrganizationContext);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const currentOrgName = currentOrganization ? currentOrganization.name : 'FlyTouch';
+
+  const onChangeOrg = (o) => {
+    setShowMenu(false);
+    changeOrganization(o);
+  };
+
+  const otherOrgItems = otherOrganizations.map((o) => {
+    return (
+      <Menu.Item key={o.id} icon="exchange-alt" title={o.name} onPress={() => onChangeOrg(o)} />
+    );
+  });
+
+  return (
+    <Appbar.Header>
+      {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
+      <Appbar.Content title={currentOrgName} />
+      {otherOrganizations.length ? (
+        <Menu
+          onDismiss={() => setShowMenu(false)}
+          visible={showMenu}
+          anchor={<Appbar.Action color="white" icon="building" onPress={() => setShowMenu(true)} />}
+        >
+          {otherOrgItems}
+        </Menu>
+      ) : null}
+      <Appbar.Action icon="cog" onPress={() => console.log('Pressed settings')} />
+    </Appbar.Header>
+  );
+};
 
 const AppStack = createStackNavigator();
 const AppStackScreen = () => {
@@ -101,7 +138,11 @@ const MainStackScreen = () => {
         },
       }}
     >
-      <MainStack.Screen name="Main" component={TabScreen} options={{ headerShown: true }} />
+      <MainStack.Screen
+        name="Main"
+        component={TabScreen}
+        options={{ headerShown: true, header: OrgNavHeader }}
+      />
     </MainStack.Navigator>
   );
 };
