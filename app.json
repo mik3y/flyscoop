@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "flytouch",
+    "name": "FlyTouch",
     "slug": "flytouch",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,13 +15,20 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "app.flytouch.ios",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "app.flytouch.android",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
