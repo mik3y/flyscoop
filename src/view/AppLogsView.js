@@ -5,6 +5,7 @@ import { Title } from 'react-native-paper';
 
 import ApiContext from '../component/ApiContext';
 import CurrentAppContext from '../component/CurrentAppContext';
+import GlobalStyles from '../lib/GlobalStyles';
 import { useTimeout } from '../lib/Hooks';
 import { getLogger } from '../lib/Logging';
 
@@ -37,8 +38,11 @@ const AppLogsView = ({ route, navigation }) => {
         }
       });
       const logsAdded = newLogs.length - originalLogsLength;
-      debug(`Fetched ${logsAdded} new log lines, new token: ${nextToken}`);
+      debug(
+        `Fetched ${logsAdded} new log lines, ${originalLogsLength} total, new token: ${nextToken}`
+      );
       setLogs(newLogs.slice(0, MAX_LOGS_TO_SHOW));
+      setToken(nextToken);
     } finally {
       setRefreshing(false);
       setNextTimeout(POLL_INTERVAL_MILLIS);
@@ -60,7 +64,7 @@ const AppLogsView = ({ route, navigation }) => {
     const style = idx % 2 ? styles.logLineEven : styles.logLineOdd;
     return (
       <View style={style} key={log.id}>
-        <Text>{log.attributes.message}</Text>
+        <Text style={GlobalStyles.logText}>{log.attributes.message}</Text>
       </View>
     );
   });
