@@ -35,6 +35,7 @@ export const OrganizationContextProvider = function ({ children }) {
       loadOrgs();
     } else {
       setOrganizations([]);
+      setIsLoading(false);
     }
   }, [apiClient, isLoggedIn]);
 

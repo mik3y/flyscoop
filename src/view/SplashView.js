@@ -19,8 +19,8 @@ import logo from '../../assets/icon.png';
 
 const SplashView = ({ message = null }) => {
   return (
-    <View style={styles.container}>
-      <Image source={logo} style={{ width: 200, height: 200 }} />
+    <View key={'splash'} style={styles.container}>
+      <Image key={'splash-logo'} source={logo} style={{ width: 200, height: 200 }} />
       {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );

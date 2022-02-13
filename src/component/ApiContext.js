@@ -89,11 +89,11 @@ export const ApiContextProvider = function ({ children }) {
   };
 
   const getComponentToRender = () => {
-    if (!isInitialized) {
+    if (!isInitialized || (authToken && !authTokenValidated)) {
       // We haven't (potentially) loaded our API key from storage. Just wait
       // for that to come online.
       return <SplashView message={'Loading credentials...'} />;
-    } else if (authTokenValidated && !isLoggedIn) {
+    } else if ((!authToken || authTokenValidated) && !isLoggedIn) {
       // We've loaded a key, and it's either null or invalid. Show the login view.
       return <LoginView onApiKeySet={doLogin} validateAuthToken={validateAuthToken} />;
     } else {
