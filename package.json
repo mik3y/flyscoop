@@ -25,6 +25,7 @@
     "expo": "~44.0.0",
     "expo-app-loading": "~1.3.0",
     "expo-application": "~4.0.1",
+    "expo-clipboard": "~2.1.0",
     "expo-constants": "~13.0.0",
     "expo-device": "~4.1.0",
     "expo-font": "~10.0.4",
