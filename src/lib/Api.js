@@ -103,6 +103,29 @@ query {
   }
 }`;
 
+const QUERY_GET_RELEASES = (appName) => `
+query {
+  app(name:"${appName}") {
+    releases {
+      nodes {
+        id
+        createdAt
+        image {
+          absoluteRef
+          createdAt
+          id
+          label
+          tag
+        }
+        imageRef
+        reason
+        status
+        version
+      }
+    }
+  }
+}`;
+
 const METRIC_QUERIES = {
   data_sent: (app) =>
     `sum(rate(fly_instance_net_sent_bytes{app="${app.name}",device="eth0"}[15s]))`,
@@ -281,6 +304,12 @@ class ApiClient {
   async getAppDetail(appName) {
     const q = QUERY_GET_APP_DETAIL(appName);
     const result = (await this.queryGql(q)).data.app;
+    return result;
+  }
+
+  async getAppReleases(appName) {
+    const q = QUERY_GET_RELEASES(appName);
+    const result = (await this.queryGql(q)).data.app.releases.nodes;
     return result;
   }
 

@@ -9,6 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import CurrentAppContext from '../component/CurrentAppContext';
 import OrganizationContext from '../component/OrganizationContext';
+import AppDeploysView from './AppDeploysView';
 import AppDetailView from './AppDetailView';
 import AppLogsView from './AppLogsView';
 import AppsView from './AppsView';
@@ -88,6 +89,14 @@ const AppTabsScreen = ({ route }) => {
           options={{
             tabBarLabel: 'Logs',
             tabBarIcon: ({ color }) => <FontAwesome5 name="file-alt" color={color} size={26} />,
+          }}
+        />
+        <Tab.Screen
+          name="AppDeploys"
+          component={AppDeploysView}
+          options={{
+            tabBarLabel: 'Deploys',
+            tabBarIcon: ({ color }) => <FontAwesome5 name="bolt" color={color} size={26} />,
           }}
         />
       </Tab.Navigator>
