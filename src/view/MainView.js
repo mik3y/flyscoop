@@ -5,7 +5,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { View } from 'react-native';
 import { Appbar, Menu, useTheme } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import CurrentAppContext from '../component/CurrentAppContext';
 import OrganizationContext from '../component/OrganizationContext';

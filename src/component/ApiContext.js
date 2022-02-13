@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import ApiClient from '../lib/Api';
 import LoginView from '../view/LoginView';
 import EnvironmentContext from './EnvironmentContext';
+import LoadingZone from './LoadingZone';
 import SettingsContext from './SettingsContext';
 
 /**
@@ -75,6 +76,20 @@ export const ApiContextProvider = function ({ children }) {
     }
   };
 
+  const getComponentToRender = () => {
+    if (!isInitialized) {
+      // We haven't (potentially) loaded our API key from storage. Just wait
+      // for that to come online.
+      return <LoadingZone />;
+    } else if (!isLoggedIn) {
+      // We've loaded a key, and it's either null or invalid. Show the login view.
+      return <LoginView onApiKeySet={doLogin} validateAuthToken={validateAuthToken} />;
+    } else {
+      // Happy path: Onward to the rest of the app!
+      return children;
+    }
+  };
+
   return (
     <ApiContext.Provider
       value={{
@@ -83,11 +98,7 @@ export const ApiContextProvider = function ({ children }) {
         validateAuthToken,
       }}
     >
-      {isLoggedIn ? (
-        children
-      ) : (
-        <LoginView onApiKeySet={doLogin} validateAuthToken={validateAuthToken} />
-      )}
+      {getComponentToRender()}
     </ApiContext.Provider>
   );
 };

@@ -18,6 +18,7 @@ export const SettingsContextProvider = function ({ children }) {
   const [storage, setStorage] = useState(null);
   const [installationId, setInstallationId] = useState(null);
   const [authToken, setAuthTokenInternal] = useState(null);
+  const [defaultOrgId, setDefaultOrgIdInternal] = useState(null);
 
   const initialize = async () => {
     setIsInitialized(false);
@@ -25,6 +26,7 @@ export const SettingsContextProvider = function ({ children }) {
     setStorage(s);
     setInstallationId(await s.getInstallationId());
     setAuthTokenInternal(await s.getAuthToken());
+    setDefaultOrgIdInternal(await s.getDefaultOrgId());
     setIsInitialized(true);
   };
 
@@ -44,6 +46,11 @@ export const SettingsContextProvider = function ({ children }) {
     await storage.setAuthToken(newToken);
   };
 
+  const setDefaultOrgId = async (newDefaultOrgId) => {
+    setDefaultOrgIdInternal(newDefaultOrgId);
+    await storage.setDefaultOrgId(newDefaultOrgId);
+  };
+
   // Re-initialize any time envrionment changes. This is important because
   // our inner `Storage` instance takes and uses `environment.name` to
   // segregate storage.
@@ -60,6 +67,8 @@ export const SettingsContextProvider = function ({ children }) {
         resetInstallation,
         authToken,
         setAuthToken,
+        defaultOrgId,
+        setDefaultOrgId,
       }}
     >
       {children}

@@ -7,6 +7,9 @@ class Storage {
   /** An anonymous, install-unique id. For future analytics. */
   static KEY_INSTALLATION_ID = 'installation_id';
 
+  /** ID of the default organization in the nav switcher. */
+  static KEY_DEFAULT_ORG_ID = 'default_org_id';
+
   /** Stores the auth tokens from our api. */
   static SECURE_KEY_API_AUTH_TOKEN = 'api_auth_token';
 
@@ -47,6 +50,14 @@ class Storage {
       await this._set(Storage.KEY_INSTALLATION_ID, installationId);
     }
     return installationId;
+  }
+
+  async getDefaultOrgId(defaultValue = null) {
+    return await this._get(Storage.KEY_DEFAULT_ORG_ID, defaultValue);
+  }
+
+  async setDefaultOrgId(orgId) {
+    return await this._set(Storage.KEY_DEFAULT_ORG_ID, orgId);
   }
 
   async setAuthToken(token) {
