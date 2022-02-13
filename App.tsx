@@ -5,6 +5,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { ApiContextProvider } from './src/component/ApiContext';
 import { EnvironmentContextProvider } from './src/component/EnvironmentContext';
@@ -38,7 +39,12 @@ export default function App() {
         <ApiContextProvider>
           <SafeAreaProvider>
             <NavigationContainer>
-              <PaperProvider theme={theme}>
+                <PaperProvider
+                  theme={theme}
+                  settings={{
+                    icon: (props) => <FontAwesome5 {...props} />,
+                  }}
+                >
                 <Bootloader />
               </PaperProvider>
             </NavigationContainer>

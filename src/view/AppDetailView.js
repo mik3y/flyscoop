@@ -189,7 +189,7 @@ const AppDetailView = ({ route, navigation }) => {
           </Card.Content>
         </Card>
         <Section>
-          <Button mode={'contained'} icon="note-text" onPress={doViewLogs}>
+          <Button mode={'contained'} icon="file-alt" onPress={doViewLogs}>
             View Logs
           </Button>
         </Section>
