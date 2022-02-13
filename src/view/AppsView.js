@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
+import { orderBy } from 'lodash';
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, Caption, Card, Chip, Portal } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import ApiContext from '../component/ApiContext';
 import EmptyState from '../component/EmptyState';
-import LoadingZone from '../component/LoadingZone';
 import OrganizationContext from '../component/OrganizationContext';
 import { TimeSince } from '../component/TimeUtil';
 import GlobalStyles from '../lib/GlobalStyles';
@@ -117,7 +117,12 @@ const AppsView = () => {
     try {
       const allApps = await apiClient.getApps();
       const orgApps = allApps.filter((a) => a.organization.id === currentOrganization.id);
-      setApps(orgApps);
+
+      // Sory apps by most recently released.
+      // TODO(mikey): Control this filter in the view.
+      const sortedApps = orderBy(orgApps, ['currentRelease.createdAt'], ['desc']);
+
+      setApps(sortedApps);
     } catch (e) {
       console.error(e);
     } finally {
