@@ -52,7 +52,7 @@ export default SettingsView = () => {
             {getEnvSwitcher()}
             <Button
               style={{ marginTop: 20 }}
-              icon="web"
+              icon="globe"
               onPress={() => Linking.openURL('https://FlyTouch.app/')}
             >
               Visit FlyTouch.app
@@ -62,7 +62,7 @@ export default SettingsView = () => {
         <Card style={styles.cardStyle}>
           <Card.Title title={'DangerZone™'} />
           <Card.Content>
-            <Button icon="cellphone-erase" mode="contained" onPress={() => resetInstallation()}>
+            <Button icon="sign-out-alt" mode="contained" onPress={() => resetInstallation()}>
               Reset app
             </Button>
           </Card.Content>

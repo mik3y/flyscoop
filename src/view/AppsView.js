@@ -134,7 +134,7 @@ const AppsView = () => {
   }, [currentOrganization]);
 
   const onAppSelected = (app) => {
-    navigation.navigate('AppDetail', { app });
+    navigation.navigate('AppTabs', { app });
   };
 
   const getAppList = () => {

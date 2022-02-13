@@ -4,8 +4,10 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { createStackNavigator } from '@react-navigation/stack';
 import { View } from 'react-native';
 import { Appbar, Menu, useTheme } from 'react-native-paper';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import CurrentAppContext from '../component/CurrentAppContext';
 import OrganizationContext from '../component/OrganizationContext';
 import AppDetailView from './AppDetailView';
 import AppLogsView from './AppLogsView';
@@ -23,6 +25,12 @@ const OrgNavHeader = ({ navigation, back }) => {
   const onChangeOrg = (o) => {
     setShowMenu(false);
     changeOrganization(o);
+  };
+
+  const onSettingsPressed = () => {
+    navigation.navigate('Modals', {
+      screen: 'Settings',
+    });
   };
 
   const otherOrgItems = otherOrganizations.map((o) => {
@@ -44,72 +52,38 @@ const OrgNavHeader = ({ navigation, back }) => {
           {otherOrgItems}
         </Menu>
       ) : null}
-      <Appbar.Action icon="cog" onPress={() => console.log('Pressed settings')} />
+      <Appbar.Action icon="cog" onPress={onSettingsPressed} />
     </Appbar.Header>
   );
 };
 
-const AppStack = createStackNavigator();
-const AppStackScreen = () => {
-  const { colors } = useTheme();
-  return (
-    <AppStack.Navigator
-      screenOptions={{
-        headerShown: false,
-        headerStyle: {
-          backgroundColor: colors.primary,
-        },
-        headerTitleStyle: {
-          color: '#fff',
-        },
-      }}
-    >
-      <AppStack.Screen name="Apps" component={AppsView} options={{ headerShown: false }} />
-      <AppStack.Screen name="AppDetail" component={AppDetailView} options={{ headerShown: true }} />
-    </AppStack.Navigator>
-  );
-};
-
 const Tab = createMaterialBottomTabNavigator();
-const TabScreen = () => {
+
+const AppTabsScreen = ({ route }) => {
+  const { app } = route.params;
   const { colors } = useTheme();
 
   return (
-    <>
+    <CurrentAppContext.Provider value={{ app }}>
       <Tab.Navigator initialRouteName="appsStack" barStyle={{ backgroundColor: colors.primary }}>
         <Tab.Screen
-          name="appsStack"
-          component={AppStackScreen}
+          name="AppDetail"
+          component={AppDetailView}
           options={{
-            tabBarLabel: 'Apps',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="format-list-text" color={color} size={26} />
-            ),
+            tabBarLabel: 'Summary',
+            tabBarIcon: ({ color }) => <FontAwesome5 name="th-list" color={color} size={26} />,
           }}
         />
         <Tab.Screen
-          name="login"
-          component={LoginView}
+          name="AppLogs"
+          component={AppLogsView}
           options={{
-            tabBarLabel: 'Login',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="account" color={color} size={26} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="settings"
-          component={SettingsView}
-          options={{
-            headerShown: true,
-            tabBarLabel: 'Settings',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="adjust" color={color} size={26} />
-            ),
+            tabBarLabel: 'Logs',
+            tabBarIcon: ({ color }) => <FontAwesome5 name="file-alt" color={color} size={26} />,
           }}
         />
       </Tab.Navigator>
-    </>
+    </CurrentAppContext.Provider>
   );
 };
 
@@ -118,6 +92,7 @@ const ModalStackScreen = () => {
   return (
     <ModalStack.Navigator screenOptions={{ presentation: 'modal' }}>
       <ModalStack.Screen name="LoginModal" component={LoginView} options={{ headerShown: false }} />
+      <ModalStack.Screen name="Settings" component={SettingsView} options={{ headerShown: true }} />
       <ModalStack.Screen name="AppLogs" component={AppLogsView} options={{ headerShown: true }} />
       {/* Other modals here. */}
     </ModalStack.Navigator>
@@ -140,7 +115,12 @@ const MainStackScreen = () => {
     >
       <MainStack.Screen
         name="Main"
-        component={TabScreen}
+        component={AppsView}
+        options={{ headerShown: true, header: OrgNavHeader }}
+      />
+      <MainStack.Screen
+        name="AppTabs"
+        component={AppTabsScreen}
         options={{ headerShown: true, header: OrgNavHeader }}
       />
     </MainStack.Navigator>

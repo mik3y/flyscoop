@@ -56,6 +56,7 @@ query {
     name
     id
     runtime
+    hostname
     organization {
       slug
     }
@@ -180,8 +181,6 @@ class ApiClient {
   }
 
   async _fetch(method, path, data = null, params = {}, withAccessToken = true, formEncode) {
-    console.log('### API call: ', this.accessToken);
-
     const querystring = new URLSearchParams();
     for (let key in params) {
       querystring.append(key, params[key]);

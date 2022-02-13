@@ -4,6 +4,7 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native
 import { Title } from 'react-native-paper';
 
 import ApiContext from '../component/ApiContext';
+import CurrentAppContext from '../component/CurrentAppContext';
 import { useTimeout } from '../lib/Hooks';
 import { getLogger } from '../lib/Logging';
 
@@ -13,7 +14,7 @@ const POLL_INTERVAL_MILLIS = 5000;
 const debug = getLogger('AppLogsView');
 
 const AppLogsView = ({ route, navigation }) => {
-  const { app } = route.params;
+  const { app } = useContext(CurrentAppContext);
   const [logs, setLogs] = useState([]);
   const [token, setToken] = useState(null);
   const [refreshing, setRefreshing] = React.useState(true);

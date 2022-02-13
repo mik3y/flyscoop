@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, Card, Title } from 'react-native-paper';
 
 import ApiContext from '../component/ApiContext';
+import CurrentAppContext from '../component/CurrentAppContext';
 import LoadingZone from '../component/LoadingZone';
 import MetricsCard from '../component/MetricsCard';
 import { LongDateAndTime } from '../component/TimeUtil';
@@ -144,7 +145,7 @@ const AppRegionalStatusSection = ({ app, appDetail }) => {
 };
 
 const AppDetailView = ({ route, navigation }) => {
-  const { app } = route.params;
+  const { app } = useContext(CurrentAppContext);
   const [isLoading, setIsLoading] = useState(false);
   const [detail, setDetail] = useState(null);
   const { apiClient } = useContext(ApiContext);
@@ -165,13 +166,6 @@ const AppDetailView = ({ route, navigation }) => {
     load();
   }, [app]);
 
-  const doViewLogs = () => {
-    navigation.navigate('Modals', {
-      screen: 'AppLogs',
-      params: { app },
-    });
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -189,8 +183,12 @@ const AppDetailView = ({ route, navigation }) => {
           </Card.Content>
         </Card>
         <Section>
-          <Button mode={'contained'} icon="file-alt" onPress={doViewLogs}>
-            View Logs
+          <Button
+            icon="globe"
+            mode={'contained'}
+            onPress={() => Linking.openURL(`https://${app.hostname}`)}
+          >
+            {app.hostname}
           </Button>
         </Section>
         <LoadingZone isLoading={isLoading}>
