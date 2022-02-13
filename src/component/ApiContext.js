@@ -17,6 +17,7 @@ export const ApiContextProvider = function ({ children }) {
   const { environment } = useContext(EnvironmentContext);
   const { appConfig, installationId, isInitialized, authToken } = useContext(SettingsContext);
   const [apiClient, setApiClient] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -25,6 +26,20 @@ export const ApiContextProvider = function ({ children }) {
     }
     setApiClient(new ApiClient(authToken));
   }, [isInitialized, environment, appConfig, installationId, authToken]);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        await apiClient.getViewer();
+        setIsLoggedIn(true);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (apiClient) {
+      load();
+    }
+  }, [apiClient]);
 
   const validateApiKey = async (newApiKey) => {
     const c = new ApiClient(newApiKey);
@@ -36,6 +51,7 @@ export const ApiContextProvider = function ({ children }) {
       value={{
         apiClient,
         validateApiKey,
+        isLoggedIn,
       }}
     >
       {children}

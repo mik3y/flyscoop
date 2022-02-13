@@ -6,6 +6,17 @@ const debug = getLogger('ApiClient');
 
 const QUERY_GET_VIEWER = () => `query { viewer { email } }`;
 
+const QUERY_GET_ORGANIZATIONS = () => `
+query {
+  organizations {
+    nodes {
+      id
+      slug
+      name
+    }
+  }
+}`;
+
 const QUERY_GET_APPS = () => `
 query {
   apps(role:null) {
@@ -14,6 +25,9 @@ query {
       status
       state
       appUrl
+      organization {
+        id
+      }
       regions {
         name
         code
@@ -252,6 +266,11 @@ class ApiClient {
   async getViewer() {
     const q = QUERY_GET_VIEWER();
     return this.queryGql(q);
+  }
+
+  async getOrganizations() {
+    const q = QUERY_GET_ORGANIZATIONS();
+    return (await this.queryGql(q)).data.organizations.nodes;
   }
 
   async getApps() {

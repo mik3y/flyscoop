@@ -9,6 +9,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { ApiContextProvider } from './src/component/ApiContext';
 import { EnvironmentContextProvider } from './src/component/EnvironmentContext';
+import { OrganizationContextProvider } from './src/component/OrganizationContext';
 import { SettingsContextProvider } from './src/component/SettingsContext';
 import Bootloader from './src/view/Bootloader';
 
@@ -37,18 +38,20 @@ export default function App() {
     <EnvironmentContextProvider>
       <SettingsContextProvider>
         <ApiContextProvider>
-          <SafeAreaProvider>
-            <NavigationContainer>
+          <OrganizationContextProvider>
+            <SafeAreaProvider>
+              <NavigationContainer>
                 <PaperProvider
                   theme={theme}
                   settings={{
                     icon: (props) => <FontAwesome5 {...props} />,
                   }}
                 >
-                <Bootloader />
-              </PaperProvider>
-            </NavigationContainer>
-          </SafeAreaProvider>
+                  <Bootloader />
+                </PaperProvider>
+              </NavigationContainer>
+            </SafeAreaProvider>
+          </OrganizationContextProvider>
         </ApiContextProvider>
       </SettingsContextProvider>
     </EnvironmentContextProvider>
