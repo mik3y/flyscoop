@@ -48,6 +48,11 @@ const AppCard = ({ app, onPress = () => {}, ...cardProps }) => {
         <FontAwesome5 name={'check-circle'} style={[styles.statusIcon, styles.statusIconHealthy]} />
       );
       break;
+    case 'pending':
+      appIcon = (
+        <FontAwesome5 name={'dot-circle'} style={[styles.statusIcon, styles.statusIconPending]} />
+      );
+      break;
     case 'dead':
       appIcon = <FontAwesome5 name={'skull'} style={[styles.statusIcon, styles.statusIconDead]} />;
       break;
@@ -175,6 +180,9 @@ const styles = StyleSheet.create({
   },
   statusIconHealthy: {
     color: '#1DB954',
+  },
+  statusIconPending: {
+    color: '#f7a35e',
   },
   statusIconDead: {
     color: '#777777',
