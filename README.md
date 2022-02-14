@@ -1,4 +1,4 @@
-# FlyTouch
+# FlyScoop
 
 Remote monitoring and management app for Fly.io
 
@@ -16,7 +16,7 @@ Remote monitoring and management app for Fly.io
 
 ## Project Overview
 
-FlyTouch aims to be a simple, useful, on-the-go management app for Fly.io accounts.
+FlyScoop aims to be a simple, useful, on-the-go management app for Fly.io accounts.
 
 It tries to blend the best and most essential features of the Fly.io dashboard and the `flyctl` app to make the most common monitoring and management tasks easy to accomplish.
 

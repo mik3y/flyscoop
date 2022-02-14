@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "FlyTouch",
-    "slug": "flytouch",
+    "name": "FlyScoop",
+    "slug": "flyscoop",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,8 +16,8 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.flytouch.ios",
-      "buildNumber": "1",
+      "bundleIdentifier": "app.flyscoop.ios",
+      "buildNumber": "6",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -27,8 +27,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "app.flytouch.android",
-      "versionCode": 1
+      "package": "app.flyscoop.android",
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"

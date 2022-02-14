@@ -20,7 +20,7 @@ const OrgNavHeader = ({ navigation, back }) => {
     useContext(OrganizationContext);
   const [showMenu, setShowMenu] = useState(false);
 
-  const currentOrgName = currentOrganization ? currentOrganization.name : 'FlyTouch';
+  const currentOrgName = currentOrganization ? currentOrganization.name : 'FlyScoop';
 
   const onChangeOrg = (o) => {
     setShowMenu(false);

@@ -20,16 +20,16 @@ export default SettingsView = () => {
           <Card.Title title={'About'} />
           <Card.Content>
             <Text>
-              FlyTouch: A simple management app for Fly.io. Version {version}{' '}
+              FlyScoop: A simple management app for Fly.io. Version {version}{' '}
               {releaseId ? `release ${releaseId}` : null}{' '}
               {revisionId ? `revision ${revisionId}` : null}
             </Text>
             <Button
               style={{ marginTop: 20 }}
               icon="globe"
-              onPress={() => Linking.openURL('https://FlyTouch.app/')}
+              onPress={() => Linking.openURL('https://FlyScoop.app/')}
             >
-              Visit FlyTouch.app
+              Visit FlyScoop.app
             </Button>
           </Card.Content>
         </Card>
