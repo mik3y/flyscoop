@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 
-import { StyleSheet, Text, View } from 'react-native';
-import { Appbar, Button, DefaultTheme, TextInput } from 'react-native-paper';
+import { Linking, StyleSheet, Text, View } from 'react-native';
+import { Appbar, Button, Caption, DefaultTheme, TextInput } from 'react-native-paper';
+
+import GlobalStyles from '../lib/GlobalStyles';
 
 const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
   const [apiKey, setApiKey] = useState('');
@@ -29,7 +31,7 @@ const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
         style={styles.input}
         textContentType="password"
         secureTextEntry
-        placeholder="API key"
+        placeholder="Access token"
         autoCompleteType="password"
         autoCorrect={false}
         value={apiKey}
@@ -40,6 +42,20 @@ const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
       <Button mode="contained" onPress={doLogin} disabled={isLoggingIn} style={styles.loginButton}>
         {isLoggingIn ? 'Logging In...' : 'Log In'}
       </Button>
+      <View style={{ width: '100%', marginTop: 20, alignItems: 'center' }}>
+        <Caption style={{ textAlign: 'center' }}>
+          Input an access token to continue. In the Fly.io dashboard, visit Settings → Access Tokens
+          to create a token.
+        </Caption>
+        <Button
+          mode={'outlined'}
+          style={{ marginTop: 20 }}
+          icon={'globe'}
+          onPress={() => Linking.openURL('https://web.fly.io/user/personal_access_tokens')}
+        >
+          Visit Fly.io Dashboard
+        </Button>
+      </View>
     </View>
   );
 };
