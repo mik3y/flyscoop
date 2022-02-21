@@ -1,10 +1,12 @@
 import { View } from 'react-native';
 import { Caption } from 'react-native-paper';
 
+import GlobalStyles from '../lib/GlobalStyles';
+
 const EmptyState = ({ message }) => {
   return (
     <View style={styles.container}>
-      <Caption style={styles.caption}>{message}</Caption>
+      <Caption style={GlobalStyles.caption}>{message}</Caption>
     </View>
   );
 };
@@ -12,10 +14,6 @@ const EmptyState = ({ message }) => {
 const styles = {
   container: {
     padding: 20,
-  },
-  caption: {
-    fontSize: 20,
-    textAlign: 'center',
   },
 };
 
