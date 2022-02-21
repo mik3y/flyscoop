@@ -35,25 +35,25 @@ const theme = {
 
 export default function App() {
   return (
-    <EnvironmentContextProvider>
-      <SettingsContextProvider>
-        <ApiContextProvider>
-          <OrganizationContextProvider>
-            <SafeAreaProvider>
-              <NavigationContainer>
-                <PaperProvider
-                  theme={theme}
-                  settings={{
-                    icon: (props) => <FontAwesome5 {...props} />,
-                  }}
-                >
+    <PaperProvider
+      theme={theme}
+      settings={{
+        icon: (props) => <FontAwesome5 {...props} />,
+      }}
+    >
+      <EnvironmentContextProvider>
+        <SettingsContextProvider>
+          <ApiContextProvider>
+            <OrganizationContextProvider>
+              <SafeAreaProvider>
+                <NavigationContainer>
                   <Bootloader />
-                </PaperProvider>
-              </NavigationContainer>
-            </SafeAreaProvider>
-          </OrganizationContextProvider>
-        </ApiContextProvider>
-      </SettingsContextProvider>
-    </EnvironmentContextProvider>
+                </NavigationContainer>
+              </SafeAreaProvider>
+            </OrganizationContextProvider>
+          </ApiContextProvider>
+        </SettingsContextProvider>
+      </EnvironmentContextProvider>
+    </PaperProvider>
   );
 }
