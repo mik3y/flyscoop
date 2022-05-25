@@ -1,0 +1,5 @@
+*.md
+ios/
+android/
+src/res/
+app.json

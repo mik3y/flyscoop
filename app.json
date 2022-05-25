@@ -13,11 +13,13 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.flyscoop.ios",
-      "buildNumber": "8",
+      "buildNumber": "12",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -28,7 +30,7 @@
         "backgroundColor": "#3a0088"
       },
       "package": "app.flyscoop.android",
-      "versionCode": 6
+      "versionCode": 12
     },
     "web": {
       "favicon": "./assets/favicon.png"
