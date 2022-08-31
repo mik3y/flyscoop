@@ -50,10 +50,18 @@ const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
         <Button
           mode={'outlined'}
           style={{ marginTop: 20 }}
-          icon={'globe'}
+          icon={'external-link-alt'}
           onPress={() => Linking.openURL('https://web.fly.io/user/personal_access_tokens')}
         >
-          Visit Fly.io Dashboard
+          Open Fly.io Dashboard
+        </Button>
+        <Button
+          style={{ marginTop: 20 }}
+          icon="file-alt"
+          mode={'outlined'}
+          onPress={() => Linking.openURL('https://flyscoop.app/privacy/')}
+        >
+          FlyScoop Privacy Policy
         </Button>
       </View>
     </View>

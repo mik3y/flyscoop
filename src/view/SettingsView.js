@@ -27,9 +27,18 @@ export default SettingsView = () => {
             <Button
               style={{ marginTop: 20 }}
               icon="globe"
-              onPress={() => Linking.openURL('https://FlyScoop.app/')}
+              mode={'outlined'}
+              onPress={() => Linking.openURL('https://flyscoop.app/')}
             >
-              Visit FlyScoop.app
+              Homepage
+            </Button>
+            <Button
+              style={{ marginTop: 20 }}
+              icon="file-alt"
+              mode={'outlined'}
+              onPress={() => Linking.openURL('https://flyscoop.app/privacy/')}
+            >
+              Privacy Policy
             </Button>
           </Card.Content>
         </Card>
