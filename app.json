@@ -19,7 +19,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.flyscoop.ios",
-      "buildNumber": "16",
+      "buildNumber": "20",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -30,7 +30,7 @@
         "backgroundColor": "#3a0088"
       },
       "package": "app.flyscoop.android",
-      "versionCode": 16
+      "versionCode": 20
     },
     "web": {
       "favicon": "./assets/favicon.png"
