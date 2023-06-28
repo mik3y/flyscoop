@@ -164,11 +164,11 @@ const RootStackScreen = () => {
  * MainView hosts the main (bottom) navigation, and swaps between
  * the primary screens.
  */
-const MainView = () => {
+const MainView = ({ ...props }) => {
   /** Returns the top-level navigator; a mere container for our modals and tabs. */
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} {...props}>
       <RootStackScreen />
     </View>
   );

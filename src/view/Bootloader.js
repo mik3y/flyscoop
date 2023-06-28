@@ -1,12 +1,12 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import {
   RobotoMono_400Regular,
   RobotoMono_700Bold,
   useFonts,
 } from '@expo-google-fonts/roboto-mono';
-import AppLoading from 'expo-app-loading';
 import Constants from 'expo-constants';
+import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
@@ -19,6 +19,10 @@ import MainView from './MainView';
 const debug = getLogger('BootloaderView');
 
 const SPLASH_SCREEN_DEFAULT_TIMEOUT_MILLIS = 1500;
+
+// Yucky module-level init that expo recommends *shrug*.
+// Docs: https://docs.expo.dev/versions/latest/sdk/splash-screen/
+SplashScreen.preventAutoHideAsync();
 
 /**
  * Shows a splash screen until the app is ready.
@@ -70,6 +74,12 @@ export default BootloaderView = () => {
       setAppIsUpToDate(true);
     }
   };
+
+  const onLayoutRootView = useCallback(async () => {
+    if (isInitialized) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isInitialized]);
 
   // Stages of bootloader initialization:
   //   1 - Initialize storage (`isInitialized` -> true)
@@ -131,23 +141,17 @@ export default BootloaderView = () => {
     }
   }, [isInitialized, apiClient, checkinComplete, appIsUpToDate]);
 
-  // When mounted, the <AppLoading /> component keeps the native
-  // splash screen visible to prevent a flash. Let's keep it mounted for
-  // the short interval while not initialized.
-  const appLoading = !isInitialized ? <AppLoading /> : null;
-
   // Show the splash screen.
   if (!isInitialized || showingSplashScreen)
     return (
       <View style={styles.container}>
-        {appLoading}
         <Image source={logo} style={{ width: 400, height: 400 }} />
         {statusText ? <Text style={styles.statusText}>{statusText}</Text> : null}
       </View>
     );
 
   // Show the main app.
-  return <MainView />;
+  return <MainView onLayout={onLayoutRootView} />;
 };
 
 const styles = StyleSheet.create({
