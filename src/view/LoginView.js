@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { Linking, StyleSheet, Text, View } from 'react-native';
 import { Appbar, Button, Caption, DefaultTheme, TextInput } from 'react-native-paper';
 
-import GlobalStyles from '../lib/GlobalStyles';
+import ApiContext from '../component/ApiContext';
 
-const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
-  const [apiKey, setApiKey] = useState('');
+const LoginForm = () => {
+  const [newApiKey, setNewApiKey] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const { setApiKey } = useContext(ApiContext);
 
   const doLogin = async () => {
     setIsLoggingIn(true);
     setErrorMessage(null);
     try {
-      const isValid = await validateAuthToken(apiKey);
-      if (!isValid) {
-        setErrorMessage('Invalid token');
-        return;
-      }
-      await onApiKeySet(apiKey);
+      await setApiKey(newApiKey);
+    } catch (e) {
+      setErrorMessage('Invalid token');
     } finally {
       setIsLoggingIn(false);
     }
@@ -34,9 +33,9 @@ const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
         placeholder="Access token"
         autoCompleteType="password"
         autoCorrect={false}
-        value={apiKey}
+        value={newApiKey}
         editable={!isLoggingIn}
-        onChangeText={setApiKey}
+        onChangeText={setNewApiKey}
       />
       {errorMessage && <Text>{errorMessage}</Text>}
       <Button mode="contained" onPress={doLogin} disabled={isLoggingIn} style={styles.loginButton}>
@@ -68,11 +67,11 @@ const LoginForm = ({ onApiKeySet, validateAuthToken }) => {
   );
 };
 
-export default function LoginView({ onApiKeySet, validateAuthToken }) {
+export default function LoginView() {
   const getContent = () => {
     return (
       <View style={styles.mainContent}>
-        <LoginForm onApiKeySet={onApiKeySet} validateAuthToken={validateAuthToken} />
+        <LoginForm />
       </View>
     );
   };

@@ -3,10 +3,8 @@ import { useContext } from 'react';
 import { useEffect } from 'react';
 
 import ApiClient from '../lib/Api';
-import LoginView from '../view/LoginView';
 import SplashView from '../view/SplashView';
 import EnvironmentContext from './EnvironmentContext';
-import LoadingZone from './LoadingZone';
 import SettingsContext from './SettingsContext';
 
 /**
@@ -30,11 +28,19 @@ export const ApiContextProvider = function ({ children }) {
   const validateAuthToken = async (newAuthToken) => {
     try {
       const c = new ApiClient(newAuthToken);
-      const result = await c.getViewer();
+      await c.getViewer();
       return true;
     } catch (e) {
       return false;
     }
+  };
+
+  const setApiKey = async (newAuthToken) => {
+    const isValid = await validateAuthToken(newAuthToken);
+    if (!isValid) {
+      throw new Error('API key is not valid');
+    }
+    setAuthToken(newAuthToken);
   };
 
   const buildValidatedApiClient = async (newAuthToken) => {
@@ -80,24 +86,13 @@ export const ApiContextProvider = function ({ children }) {
     }
   }, [apiClient]);
 
-  const doLogin = async (newAuthToken) => {
-    const isValid = await validateAuthToken(newAuthToken);
-    if (isValid) {
-      console.log('token is valid');
-      setAuthToken(newAuthToken);
-    }
-  };
-
   const getComponentToRender = () => {
     if (!isInitialized || (authToken && !authTokenValidated)) {
       // We haven't (potentially) loaded our API key from storage. Just wait
       // for that to come online.
       return <SplashView message={'Loading credentials...'} />;
-    } else if ((!authToken || authTokenValidated) && !isLoggedIn) {
-      // We've loaded a key, and it's either null or invalid. Show the login view.
-      return <LoginView onApiKeySet={doLogin} validateAuthToken={validateAuthToken} />;
     } else {
-      // Happy path: Onward to the rest of the app!
+      // Onward to the rest of the app!
       return children;
     }
   };
@@ -107,7 +102,7 @@ export const ApiContextProvider = function ({ children }) {
       value={{
         apiClient,
         isLoggedIn,
-        validateAuthToken,
+        setApiKey,
       }}
     >
       {getComponentToRender()}

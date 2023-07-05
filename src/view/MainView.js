@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { Appbar, Menu, useTheme } from 'react-native-paper';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+import ApiContext from '../component/ApiContext';
 import CurrentAppContext from '../component/CurrentAppContext';
 import OrganizationContext from '../component/OrganizationContext';
 import AppDeploysView from './AppDeploysView';
@@ -167,9 +168,11 @@ const RootStackScreen = () => {
 const MainView = ({ ...props }) => {
   /** Returns the top-level navigator; a mere container for our modals and tabs. */
 
+  const { isLoggedIn } = useContext(ApiContext);
+
   return (
     <View style={{ flex: 1 }} {...props}>
-      <RootStackScreen />
+      {isLoggedIn ? <RootStackScreen /> : <LoginView />}
     </View>
   );
 };
